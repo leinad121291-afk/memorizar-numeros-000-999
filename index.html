@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Números Tríos - Con Autoavance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .title {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .phase-title {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .section-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .number-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 3px solid #e9ecef;
+        }
+
+        .input-field {
+            font-size: 2rem;
+            padding: 15px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px 0;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .small-input {
+            font-size: 1rem;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            width: 80px;
+            margin: 0 10px;
+        }
+
+        .small-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .digits-input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .digits-input {
+            width: 80px;
+            height: 50px;
+            border: 3px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            background: #f8f9fa;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .digits-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: scale(1.05);
+        }
+
+        .digits-input:invalid {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .result-message {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .correct-result {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .incorrect-result {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .progress-indicator {
+            font-size: 1.1rem;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .timer-config {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .timer-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .timer-option label {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .timer-select {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f8f9fa;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timer-select:hover {
+            background: #e9ecef;
+        }
+        
+        .timer-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .numbers-per-page-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .page-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .page-option label {
+            font-size: 1.1rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .page-radio {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .summary {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #bbdefb;
+        }
+
+        .summary h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .summary p {
+            margin: 8px 0;
+            color: #333;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .mode-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .mode-option label {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .mode-radio {
+            margin: 0 5px;
+        }
+
+        .range-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .range-button {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #ddd;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .range-button.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .range-button:hover {
+            background: #e9ecef;
+        }
+
+        .range-button.selected:hover {
+            background: #667eea;
+        }
+
+        /* Estilos para la dinámica de recall */
+        .continuous-input-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .continuous-input {
+            width: 100%;
+            max-width: 400px;
+            font-size: 1.5rem;
+            padding: 15px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+
+        .continuous-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-hint {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .digits-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .digit-input {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            background: white;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .digit-input:focus {
+            outline: none;
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .digit-input.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+                 .digit-input.incorrect {
+             background: #f8d7da;
+             border-color: #dc3545;
+             color: #721c24;
+         }
+         
+         /* Estilos para sistema de rondas */
+         .progress-bar {
+             width: 100%;
+             height: 20px;
+             background: #e9ecef;
+             border-radius: 10px;
+             margin: 15px 0;
+             overflow: hidden;
+         }
+         
+         .progress-fill {
+             height: 100%;
+             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+             transition: width 0.3s ease;
+             width: 0%;
+         }
+         
+         .final-score {
+             background: #e3f2fd;
+             border-radius: 15px;
+             padding: 30px;
+             margin: 20px 0;
+             border: 2px solid #bbdefb;
+             text-align: center;
+         }
+         
+         .score-display {
+             font-size: 3rem;
+             font-weight: bold;
+             margin: 20px 0;
+         }
+         
+         .score-number {
+             color: #1976d2;
+         }
+         
+         .score-label {
+             color: #666;
+             font-size: 1.5rem;
+         }
+         
+         .score-percentage {
+             font-size: 2rem;
+             color: #28a745;
+             font-weight: bold;
+         }
+         
+         .round-breakdown {
+             background: #f8f9fa;
+             border-radius: 15px;
+             padding: 20px;
+             margin: 20px 0;
+             border: 2px solid #e9ecef;
+         }
+         
+         .rounds-grid {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+             gap: 10px;
+             margin: 15px 0;
+         }
+         
+         .round-item {
+             padding: 10px;
+             border-radius: 8px;
+             text-align: center;
+             font-weight: bold;
+             font-size: 0.9rem;
+         }
+         
+         .round-item.correct {
+             background: #d4edda;
+             color: #155724;
+             border: 2px solid #c3e6cb;
+         }
+         
+         .round-item.incorrect {
+             background: #f8d7da;
+             color: #721c24;
+             border: 2px solid #f5c6cb;
+         }
+         
+         .performance-summary {
+             background: #fff3cd;
+             border-radius: 15px;
+             padding: 20px;
+             margin: 20px 0;
+             border: 2px solid #ffeaa7;
+         }
+         
+         .performance-summary h4 {
+             color: #856404;
+             margin-bottom: 15px;
+         }
+         
+         .performance-summary p {
+             margin: 8px 0;
+             color: #333;
+         }
+
+         /* Estilos para comparación visual */
+         .visual-comparison {
+             background: #f8f9fa;
+             border-radius: 15px;
+             padding: 20px;
+             margin: 20px 0;
+             border: 2px solid #e9ecef;
+         }
+
+         .comparison-row {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             gap: 10px;
+             margin: 10px 0;
+             flex-wrap: wrap;
+         }
+
+         .comparison-number {
+             display: flex;
+             gap: 2px;
+             font-family: 'Courier New', monospace;
+             font-size: 1.5rem;
+             font-weight: bold;
+         }
+
+         .comparison-digit {
+             width: 30px;
+             height: 40px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             border-radius: 5px;
+             border: 2px solid transparent;
+         }
+
+         .comparison-digit.correct {
+             background: #d4edda;
+             color: #155724;
+             border-color: #c3e6cb;
+         }
+
+         .comparison-digit.incorrect {
+             background: #f8d7da;
+             color: #721c24;
+             border-color: #f5c6cb;
+         }
+
+                 .comparison-label {
+            font-size: 1rem;
+            color: #666;
+            font-weight: bold;
+            margin: 0 15px;
+            min-width: 100px;
+            text-align: right;
+        }
+        
+        .fullscreen-button {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 40px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fullscreen-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+        }
+        
+        .fullscreen-button.fullscreen {
+            background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%) !important;
+        }
+        
+        .fullscreen-button.fullscreen:hover {
+            background: linear-gradient(135deg, #7d3c98 0%, #8e44ad 100%) !important;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 8px;
+                max-width: 99%;
+            }
+            
+            .timer-config, .mode-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .number-display {
+                font-size: 2rem;
+                padding: 20px;
+            }
+
+            .digits-grid {
+                gap: 2px;
+                max-width: 100%;
+            }
+
+            .digit-input {
+                width: 16px;
+                height: 16px;
+                font-size: 0.6rem;
+                border-width: 1px;
+                border-radius: 2px;
+            }
+            
+            .number-pair {
+                padding: 2px;
+                gap: 1px;
+                font-size: 0.7rem;
+            }
+            
+            .digits-input {
+                width: 50px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+            
+            .fullscreen-button {
+                font-size: 1rem;
+                padding: 6px 10px;
+                top: 10px;
+                right: 10px;
+                min-width: 35px;
+                min-height: 35px;
+            }
+            
+            .continuous-input {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+            
+            .input-hint {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <button class="fullscreen-button" id="fullscreen-btn" onclick="toggleFullscreen()" title="Pantalla Completa">⛶</button>
+        <h1 class="title">Números Tríos</h1>
+        
+        <!-- Fase de Configuración -->
+        <div id="setup-phase">
+            <h2 class="phase-title">Configuración del Juego</h2>
+            
+            <!-- Selección de Rangos -->
+            <div class="section">
+                <h3 class="section-title">1. Selecciona los Rangos de Números</h3>
+                <p>Activa los tramos de números de 3 dígitos que quieres memorizar:</p>
+                <div class="range-selector" id="range-selector">
+                    <!-- Los rangos se generarán dinámicamente -->
+                </div>
+                <p id="selected-ranges-info">Ningún rango seleccionado</p>
+            </div>
+
+            <!-- Cantidad de Números -->
+            <div class="section">
+                <h3 class="section-title">2. Cantidad de Números a Memorizar</h3>
+                <p>¿Cuántos números de 3 dígitos quieres memorizar?</p>
+                <div class="digits-input-container">
+                    <input type="number" id="digits-input" class="digits-input" min="1" max="999999" value="" placeholder="5">
+                    <span style="font-size: 1.1rem; color: #333;">números</span>
+                </div>
+                <p id="selected-info">Memorizarás 5 números de 3 dígitos (1 número por página)</p>
+            </div>
+
+            <!-- Configuración de Rondas -->
+            <div class="section">
+                <h3 class="section-title">3. Configuración de Rondas</h3>
+                <p>Elige cuántas rondas quieres jugar:</p>
+                <div class="digits-input-container">
+                    <input type="number" id="rounds-input" class="digits-input" min="1" max="100" value="" placeholder="10">
+                    <span style="font-size: 1.1rem; color: #333;">rondas</span>
+                </div>
+                <p id="rounds-info">Jugarás 10 rondas en total</p>
+            </div>
+
+            <!-- Números por Página -->
+            <div class="section">
+                <h3 class="section-title">4. Números por Página</h3>
+                <p>¿Cuántos números quieres que aparezcan por página durante la memorización?</p>
+                <div class="numbers-per-page-selector">
+                    <div class="page-option">
+                        <input type="radio" id="one-number-per-page" name="numbers-per-page" value="1" class="page-radio" checked>
+                        <label for="one-number-per-page">1 número por página</label>
+                    </div>
+                    <div class="page-option">
+                        <input type="radio" id="two-numbers-per-page" name="numbers-per-page" value="2" class="page-radio">
+                        <label for="two-numbers-per-page">2 números por página</label>
+                    </div>
+                </div>
+                <p id="page-info">Mostrarás 1 número por página durante la memorización</p>
+            </div>
+
+            <!-- Configuración de Temporizadores -->
+            <div class="section">
+                <h3 class="section-title">5. Configuración de Temporizadores</h3>
+                
+                <div class="timer-config">
+                    <div class="timer-option">
+                        <label for="recall-timer">Tiempo para recall (segundos):</label>
+                        <input type="number" id="recall-timer" class="timer-select" min="1" max="3600" step="0.1" value="" placeholder="30">
+                        <div id="recall-time-conversion" style="font-size: 0.9rem; color: #666; margin-top: 5px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Configuración de Autoavance -->
+            <div class="section">
+                <h3 class="section-title">6. Configuración de Tiempo de Memorización</h3>
+                
+                <div class="mode-selector">
+                    <div class="mode-option">
+                        <input type="radio" id="memorization-mode" name="time-mode" value="memorization" class="mode-radio" checked>
+                        <label for="memorization-mode">Tiempo para memorización (segundos):</label>
+                        <input type="number" id="memorization-timer" class="timer-select" min="1" max="999999" step="0.1" value="" placeholder="15">
+                        <div id="memorization-time-conversion" style="font-size: 0.9rem; color: #666; margin-top: 5px;"></div>
+                    </div>
+                    
+                    <div class="mode-option">
+                        <input type="radio" id="auto-advance-mode" name="time-mode" value="auto-advance" class="mode-radio">
+                        <label for="auto-advance-mode">Autoavance (segundos):</label>
+                        <input type="number" id="auto-advance-time" class="small-input" min="0.1" max="3600" step="0.1" value="" placeholder="3">
+                    </div>
+                </div>
+                
+                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+                    <span id="mode-description">El juego usará el tiempo de memorización configurado.</span>
+                </p>
+            </div>
+
+            <!-- Resumen de Configuración -->
+            <div class="summary" id="config-summary">
+                <h3>Resumen de Configuración</h3>
+                <p id="summary-digits">Dígitos: 3</p>
+                <p id="summary-rounds">Rondas: 10 rondas</p>
+                <p id="summary-timers">Temporizadores: Memorización 15s, Recall 30s</p>
+                <p id="summary-mode">Modo: Tiempo de memorización</p>
+            </div>
+            
+            <button class="button" onclick="startGame()">Comenzar Juego</button>
+        </div>
+
+        <!-- Fase de Memorización -->
+        <div id="memorization-phase" class="hidden">
+            <h2 class="phase-title">Fase de Memorización</h2>
+            <div class="timer" id="timer">Tiempo restante: 15 segundos</div>
+            <div class="timer" id="elapsed-time" style="color: #1976d2; font-weight: bold;">Tiempo empleado: 0.0 segundos</div>
+            <div class="number-display" id="number-display"></div>
+            <div class="progress-indicator" id="progress">Números 1-2 de 5</div>
+            <div style="margin: 20px 0;">
+                <button class="button" id="prev-btn" onclick="previousNumber()" disabled>← Anterior</button>
+                <button class="button" id="next-btn" onclick="nextNumber()">Siguiente →</button>
+            </div>
+            <p id="memorization-info">Memoriza estos números. Tienes 15 segundos.</p>
+            <div style="margin: 30px 0;">
+                <button class="button" id="finish-memorization-btn" onclick="finishMemorization()">Terminar Memorización</button>
+            </div>
+        </div>
+
+        <!-- Fase de Escritura -->
+        <div id="input-phase" class="hidden">
+            <h2 class="phase-title">Escribe los Números</h2>
+            <div class="timer" id="recall-timer-display">Tiempo restante: 30 segundos</div>
+            <p>Escribe los números de forma continua usando el teclado, o haz clic en cualquier dígito para editarlo directamente:</p>
+            
+            <!-- Input continuo para escritura rápida -->
+            <div class="continuous-input-container">
+                <label for="continuous-input">Escritura continua (recomendado):</label>
+                <input type="text" id="continuous-input" class="continuous-input" placeholder="Escribe todos los números seguidos aquí..." maxlength="999">
+                <p class="input-hint">Simplemente escribe los números y se distribuirán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
+                <p class="input-hint" style="color: #007bff; font-weight: bold;">💡 Tip: Puedes escribir directamente sin hacer clic en ningún lugar. Solo presiona las teclas numéricas y se llenarán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
+            </div>
+            
+            <div id="digits-input-container" class="digits-grid"></div>
+            <div>
+                <button class="button" onclick="checkAnswer()" id="verify-btn">Verificar Respuesta</button>
+                <button class="button" onclick="showNumberAgain()" id="show-again-btn">Ver de Nuevo</button>
+            </div>
+        </div>
+
+                 <!-- Fase de Resultado -->
+         <div id="result-phase" class="hidden">
+             <h2 class="phase-title">Resultado Ronda <span id="current-round-display">1</span></h2>
+             <div id="result-message"></div>
+             
+             <!-- Comparación visual de resultados -->
+             <div id="visual-comparison-container" class="visual-comparison"></div>
+             
+             <!-- Progresión de Resultados -->
+             <div class="section">
+                 <h3 class="section-title">Progresión de Resultados</h3>
+                 <div id="rounds-percentage-list"></div>
+             </div>
+             
+             <!-- Configuración de tiempo para siguiente ronda -->
+             <div class="section">
+                 <h3 class="section-title">Configuración para Siguiente Ronda</h3>
+                 
+                 <div class="mode-selector">
+                     <div class="mode-option">
+                         <input type="radio" id="result-memorization-mode" name="result-time-mode" value="memorization" class="mode-radio" checked>
+                         <label for="result-memorization-mode">Tiempo para memorización (segundos):</label>
+                         <input type="number" id="result-memorization-timer" class="timer-select" min="1" max="999999" step="0.1" value="" placeholder="15">
+                         <div id="result-memorization-time-conversion" style="font-size: 0.9rem; color: #666; margin-top: 5px;"></div>
+                     </div>
+                     
+                     <div class="mode-option">
+                         <input type="radio" id="result-auto-advance-mode" name="result-time-mode" value="auto-advance" class="mode-radio">
+                         <label for="result-auto-advance-mode">Autoavance (segundos):</label>
+                         <input type="number" id="result-auto-advance-time" class="small-input" min="0.1" max="3600" step="0.1" value="" placeholder="3">
+                     </div>
+                 </div>
+                 
+                 <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+                     <span id="result-mode-description">El juego usará el tiempo de memorización configurado.</span>
+                 </p>
+             </div>
+             
+             <div id="round-progress">
+                 <p>Ronda <span id="round-number">1</span> de <span id="total-rounds">10</span></p>
+                 <div class="progress-bar">
+                     <div class="progress-fill" id="round-progress-fill"></div>
+                 </div>
+             </div>
+             <div>
+                 <button class="button" onclick="nextRound()" id="next-round-btn">Siguiente Ronda</button>
+                 <button class="button" onclick="resetGame()" id="new-game-btn">Nuevo Juego</button>
+             </div>
+         </div>
+         
+         <!-- Fase de Resultados Finales -->
+         <div id="final-results-phase" class="hidden">
+             <h2 class="phase-title">¡Juego Completado!</h2>
+             <div class="final-score">
+                 <h3>Puntuación Final</h3>
+                 <div class="score-display">
+                     <span class="score-number" id="final-total-score">0</span>
+                     <span class="score-label">/ 10 puntos</span>
+                 </div>
+                 <div class="score-percentage" id="score-percentage">0%</div>
+             </div>
+             
+             <div class="round-breakdown">
+                 <h4>Desglose por Rondas:</h4>
+                 <div class="rounds-grid" id="rounds-breakdown"></div>
+             </div>
+             
+             <div class="performance-summary">
+                 <h4>Resumen de Rendimiento:</h4>
+                 <div id="performance-stats"></div>
+             </div>
+             
+             <div>
+                 <button class="button" onclick="resetGame()">Jugar de Nuevo</button>
+             </div>
+         </div>
+    </div>
+
+    <script>
+        let gameState = 'setup';
+        let selectedDigits = 5;
+        let numberSequence = [];
+        let currentNumberIndex = 0;
+        let userInput = '';
+        let isCorrect = null;
+        let timer = 0;
+        let memorizationTime = 15;
+        let recallTime = 30;
+        let timerInterval;
+        let recallTimerInterval;
+        let memorizationStartTime = 0;
+        let actualMemorizationTime = 0;
+        
+        // Variables para autoavance
+        let autoAdvanceEnabled = false;
+        let autoAdvanceTime = 3;
+        let autoAdvanceTimer = 0;
+        let autoAdvanceInterval;
+                 let currentMode = 'memorization'; // 'memorization' o 'auto-advance'
+         let results = []; // Para almacenar resultados detallados
+         
+                 // Variables para sistema de rondas
+        let currentRound = 1;
+        let totalRounds = 10;
+        let roundScores = []; // Array para almacenar puntuaciones de cada ronda
+        let totalScore = 0;
+        window.roundAccuracies = []; // Array para almacenar precisiones de cada ronda
+
+        // Variables para rangos seleccionados
+        let selectedRanges = [];
+        let availableNumbers = [];
+        
+        // Variable para números por página
+        let numbersPerPage = 1;
+
+        // Generar secuencia de números de 3 dígitos basada en rangos seleccionados
+        function generateNumberSequence() {
+            numberSequence = [];
+            
+            // Si no hay rangos seleccionados, usar todos los números de 000-999
+            if (selectedRanges.length === 0) {
+                for (let i = 0; i < selectedDigits; i++) {
+                    const number = Math.floor(Math.random() * 1000);
+                    numberSequence.push(number.toString().padStart(3, '0'));
+                }
+                return;
+            }
+            
+            // Generar números solo de los rangos seleccionados
+            for (let i = 0; i < selectedDigits; i++) {
+                if (availableNumbers.length === 0) {
+                    // Regenerar lista de números disponibles
+                    generateAvailableNumbers();
+                }
+                
+                // Seleccionar un número aleatorio de los disponibles
+                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+                const selectedNumber = availableNumbers[randomIndex];
+                numberSequence.push(selectedNumber);
+                
+                // Remover el número seleccionado para evitar duplicados
+                availableNumbers.splice(randomIndex, 1);
+            }
+        }
+
+        // Generar lista de números disponibles basada en rangos seleccionados
+        function generateAvailableNumbers() {
+            availableNumbers = [];
+            selectedRanges.forEach(range => {
+                const [start, end] = range.split('-').map(Number);
+                for (let i = start; i <= end; i++) {
+                    availableNumbers.push(i.toString().padStart(3, '0'));
+                }
+            });
+        }
+
+        // Configurar entrada de números a memorizar
+        document.getElementById('digits-input').addEventListener('input', function() {
+            // Si el usuario está borrando, permitir que el campo esté vacío temporalmente
+            if (this.value === '') {
+                selectedDigits = 0;
+                document.getElementById('selected-info').textContent = 'Escribe cuántos números quieres memorizar';
+                updateSummary();
+                updateModeDescription();
+                validateGameStart();
+                return;
+            }
+            
+            selectedDigits = parseInt(this.value) || 0;
+            if (selectedDigits < 1) selectedDigits = 1;
+            if (selectedDigits > 999999) selectedDigits = 999999;
+            this.value = selectedDigits;
+            
+            const pages = Math.ceil(selectedDigits / numbersPerPage);
+            document.getElementById('selected-info').textContent = `Memorizarás ${selectedDigits} números de 3 dígitos (${pages} páginas)`;
+            updateSummary();
+            updateModeDescription();
+            validateGameStart();
+        });
+        
+        // Establecer valor por defecto solo cuando el campo esté vacío y el usuario haya terminado de escribir
+        document.getElementById('digits-input').addEventListener('blur', function() {
+            if (!this.value || this.value === '') {
+                this.value = '5';
+                selectedDigits = 5;
+                const pages = Math.ceil(selectedDigits / numbersPerPage);
+                document.getElementById('selected-info').textContent = `Memorizarás ${selectedDigits} números de 3 dígitos (${pages} páginas)`;
+                updateSummary();
+                updateModeDescription();
+            }
+        });
+
+        // Configurar entrada de rondas
+        document.getElementById('rounds-input').addEventListener('input', function() {
+            if (this.value === '') {
+                totalRounds = 0;
+                document.getElementById('rounds-info').textContent = 'Escribe cuántas rondas quieres jugar';
+                updateSummary();
+                validateGameStart();
+                return;
+            }
+            
+            totalRounds = parseInt(this.value) || 0;
+            if (totalRounds < 1) totalRounds = 1;
+            if (totalRounds > 100) totalRounds = 100;
+            this.value = totalRounds;
+            
+            document.getElementById('rounds-info').textContent = `Jugarás ${totalRounds} rondas en total`;
+            updateSummary();
+            validateGameStart();
+        });
+        
+        // Establecer valor por defecto para rondas
+        document.getElementById('rounds-input').addEventListener('blur', function() {
+            if (!this.value || this.value === '') {
+                this.value = '10';
+                totalRounds = 10;
+                document.getElementById('rounds-info').textContent = `Jugarás ${totalRounds} rondas en total`;
+                updateSummary();
+            }
+        });
+
+        // Función para convertir segundos a minutos y segundos
+        function formatTimeDisplay(seconds) {
+            if (seconds < 60) {
+                return `${seconds} segundos`;
+            } else {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.round(seconds % 60);
+                if (remainingSeconds === 0) {
+                    return `${minutes} minuto${minutes > 1 ? 's' : ''}`;
+                } else {
+                    return `${minutes} minuto${minutes > 1 ? 's' : ''} y ${remainingSeconds} segundo${remainingSeconds > 1 ? 's' : ''}`;
+                }
+            }
+        }
+
+        // Configurar temporizadores
+        document.getElementById('memorization-timer').addEventListener('input', function() {
+            if (this.value === '') {
+                memorizationTime = 0;
+                updateSummary();
+                validateGameStart();
+                return;
+            }
+            
+            memorizationTime = parseFloat(this.value) || 0;
+            updateSummary();
+            validateGameStart();
+            
+            // Mostrar conversión de tiempo
+            const conversionDiv = document.getElementById('memorization-time-conversion');
+            if (memorizationTime > 60) {
+                conversionDiv.textContent = `(${formatTimeDisplay(memorizationTime)})`;
+                conversionDiv.style.display = 'block';
+            } else {
+                conversionDiv.style.display = 'none';
+            }
+        });
+
+        document.getElementById('recall-timer').addEventListener('input', function() {
+            if (this.value === '') {
+                recallTime = 0;
+                updateSummary();
+                validateGameStart();
+                return;
+            }
+            
+            recallTime = parseFloat(this.value) || 0;
+            updateSummary();
+            validateGameStart();
+            
+            // Mostrar conversión de tiempo
+            const conversionDiv = document.getElementById('recall-time-conversion');
+            if (recallTime > 60) {
+                conversionDiv.textContent = `(${formatTimeDisplay(recallTime)})`;
+                conversionDiv.style.display = 'block';
+            } else {
+                conversionDiv.style.display = 'none';
+            }
+        });
+
+        // Configurar modo de tiempo
+        document.getElementById('memorization-mode').addEventListener('change', function() {
+            if (this.checked) {
+                currentMode = 'memorization';
+                autoAdvanceEnabled = false;
+                updateModeDescription();
+                updateSummary();
+                validateGameStart();
+                
+                // Mostrar botón "Ver de Nuevo"
+                document.getElementById('show-again-btn').style.display = 'inline-block';
+            }
+        });
+
+        document.getElementById('auto-advance-mode').addEventListener('change', function() {
+            if (this.checked) {
+                currentMode = 'auto-advance';
+                autoAdvanceEnabled = true;
+                updateModeDescription();
+                updateSummary();
+                validateGameStart();
+                
+                // Ocultar botón "Ver de Nuevo"
+                document.getElementById('show-again-btn').style.display = 'none';
+            }
+        });
+
+        // Función para calcular el tiempo real esperado en modo autoavance
+        function calculateExpectedAutoAdvanceTime() {
+            // Asegurar que los valores sean números válidos
+            const digits = parseInt(selectedDigits) || 0;
+            const advanceTime = parseFloat(autoAdvanceTime) || 0;
+            
+            // Calcular páginas: cada página muestra numbersPerPage números
+            const totalPages = Math.ceil(digits / numbersPerPage);
+            
+            // Calcular tiempo total: páginas × tiempo por página
+            const expectedTime = totalPages * advanceTime;
+            
+            return expectedTime;
+        }
+
+        // Configurar tiempo de autoavance
+        document.getElementById('auto-advance-time').addEventListener('input', function() {
+            if (this.value === '') {
+                autoAdvanceTime = 0;
+                updateSummary();
+                updateModeDescription();
+                validateGameStart();
+                return;
+            }
+            
+            autoAdvanceTime = parseFloat(this.value) || 0;
+            updateSummary();
+            updateModeDescription();
+            validateGameStart();
+        });
+
+        // Configurar números por página
+        document.getElementById('one-number-per-page').addEventListener('change', function() {
+            if (this.checked) {
+                numbersPerPage = 1;
+                updatePageInfo();
+                updateSummary();
+            }
+        });
+
+        document.getElementById('two-numbers-per-page').addEventListener('change', function() {
+            if (this.checked) {
+                numbersPerPage = 2;
+                updatePageInfo();
+                updateSummary();
+            }
+        });
+
+        // Actualizar información de números por página
+        function updatePageInfo() {
+            const pageInfo = document.getElementById('page-info');
+            pageInfo.textContent = `Mostrarás ${numbersPerPage} número${numbersPerPage > 1 ? 's' : ''} por página durante la memorización`;
+        }
+
+        // Actualizar descripción del modo
+        function updateModeDescription() {
+            const description = document.getElementById('mode-description');
+            if (currentMode === 'memorization') {
+                if (memorizationTime > 0) {
+                    description.textContent = `El juego usará el tiempo de memorización configurado (${memorizationTime.toFixed(1)} segundos).`;
+                } else {
+                    description.textContent = `El juego usará el tiempo de memorización configurado (escribe un tiempo).`;
+                }
+            } else {
+                if (autoAdvanceTime > 0) {
+                    const expectedTime = calculateExpectedAutoAdvanceTime();
+                    description.textContent = `El juego avanzará automáticamente cada ${autoAdvanceTime.toFixed(1)} segundos por página (aproximadamente ${expectedTime.toFixed(1)} segundos total).`;
+                } else {
+                    description.textContent = `El juego avanzará automáticamente cada (escribe tiempo) segundos por página.`;
+                }
+            }
+        }
+
+        // Actualizar resumen
+        function updateSummary() {
+            const pages = Math.ceil(selectedDigits / numbersPerPage);
+            const rangeInfo = selectedRanges.length === 0 ? 'Todos los números (000-999)' : `Rangos: ${selectedRanges.join(', ')}`;
+            
+            if (selectedDigits > 0) {
+                document.getElementById('summary-digits').textContent = `Números: ${selectedDigits} de 3 dígitos (${pages} páginas) - ${rangeInfo}`;
+            } else {
+                document.getElementById('summary-digits').textContent = `Números: (escribe un número) - ${rangeInfo}`;
+            }
+            
+            // Manejar temporizadores vacíos
+            const memorizationText = memorizationTime > 0 ? `${memorizationTime.toFixed(1)}s` : '(escribe tiempo)';
+            const recallText = recallTime > 0 ? `${recallTime.toFixed(1)}s` : '(escribe tiempo)';
+            document.getElementById('summary-timers').textContent = `Temporizadores: Memorización ${memorizationText}, Recall ${recallText}`;
+            
+            if (currentMode === 'memorization') {
+                const modeText = memorizationTime > 0 ? `(${memorizationTime.toFixed(1)}s)` : '(escribe tiempo)';
+                document.getElementById('summary-mode').textContent = `Modo: Tiempo de memorización ${modeText}`;
+            } else {
+                const autoAdvanceText = autoAdvanceTime > 0 ? `${autoAdvanceTime.toFixed(1)}s` : '(escribe tiempo)';
+                const expectedTime = calculateExpectedAutoAdvanceTime();
+                const totalText = expectedTime > 0 ? `~${expectedTime.toFixed(1)}s` : '(calculando...)';
+                document.getElementById('summary-mode').textContent = `Modo: Autoavance (${autoAdvanceText} por página, ${totalText} total)`;
+            }
+            
+            // Agregar información de rondas
+            const roundsText = totalRounds > 0 ? `${totalRounds} rondas` : '(escribe número de rondas)';
+            if (document.getElementById('summary-rounds')) {
+                document.getElementById('summary-rounds').textContent = `Rondas: ${roundsText}`;
+            }
+        }
+
+        // Generar rangos de números de 3 dígitos
+        function generateRanges() {
+            const rangeSelector = document.getElementById('range-selector');
+            rangeSelector.innerHTML = '';
+            
+            // Crear rangos de 100 números cada uno
+            for (let i = 0; i < 10; i++) {
+                const start = i * 100;
+                const end = start + 99;
+                const rangeButton = document.createElement('button');
+                rangeButton.className = 'range-button';
+                rangeButton.textContent = `${start.toString().padStart(3, '0')}-${end.toString().padStart(3, '0')}`;
+                rangeButton.dataset.range = `${start}-${end}`;
+                
+                rangeButton.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    updateSelectedRanges();
+                });
+                
+                rangeSelector.appendChild(rangeButton);
+            }
+        }
+
+        // Actualizar rangos seleccionados
+        function updateSelectedRanges() {
+            const selectedButtons = document.querySelectorAll('.range-button.selected');
+            selectedRanges = Array.from(selectedButtons).map(button => button.dataset.range);
+            
+            const infoElement = document.getElementById('selected-ranges-info');
+            if (selectedRanges.length === 0) {
+                infoElement.textContent = 'Ningún rango seleccionado (se usarán todos los números de 000-999)';
+            } else {
+                infoElement.textContent = `Rangos seleccionados: ${selectedRanges.join(', ')}`;
+            }
+            
+            updateSummary();
+        }
+
+        // Inicializar rangos y resumen
+        generateRanges();
+        updateSummary();
+        updateModeDescription();
+        updatePageInfo();
+        
+        // Inicializar conversiones de tiempo
+        const memorizationConversion = document.getElementById('memorization-time-conversion');
+        const recallConversion = document.getElementById('recall-time-conversion');
+        
+        if (memorizationTime > 60) {
+            memorizationConversion.textContent = `(${formatTimeDisplay(memorizationTime)})`;
+            memorizationConversion.style.display = 'block';
+        }
+        
+        if (recallTime > 60) {
+            recallConversion.textContent = `(${formatTimeDisplay(recallTime)})`;
+            recallConversion.style.display = 'block';
+        }
+
+                         // Iniciar juego
+        function startGame() {
+            // Validar que el campo de números no esté vacío
+            if (selectedDigits <= 0) {
+                alert('Por favor, escribe cuántos números quieres memorizar antes de comenzar el juego.');
+                document.getElementById('digits-input').focus();
+                return;
+            }
+            
+            // Validar que el campo de rondas no esté vacío
+            if (totalRounds <= 0) {
+                alert('Por favor, escribe cuántas rondas quieres jugar antes de comenzar el juego.');
+                document.getElementById('rounds-input').focus();
+                return;
+            }
+            
+            // Validar que los campos de tiempo no estén vacíos
+            if (currentMode === 'memorization') {
+                if (memorizationTime <= 0) {
+                    alert('Por favor, escribe el tiempo de memorización antes de comenzar el juego.');
+                    document.getElementById('memorization-timer').focus();
+                    return;
+                }
+            } else {
+                if (autoAdvanceTime <= 0) {
+                    alert('Por favor, escribe el tiempo de autoavance antes de comenzar el juego.');
+                    document.getElementById('auto-advance-time').focus();
+                    return;
+                }
+            }
+            
+            if (recallTime <= 0) {
+                alert('Por favor, escribe el tiempo de recall antes de comenzar el juego.');
+                document.getElementById('recall-timer').focus();
+                return;
+            }
+            
+            // Limpiar todos los campos antes de comenzar el juego
+            clearAllInputs();
+            
+            // Reiniciar variables de rondas al iniciar nuevo juego
+            currentRound = 1;
+            roundScores = [];
+            totalScore = 0;
+            
+            generateNumberSequence();
+            currentNumberIndex = 0;
+            gameState = 'memorization';
+            
+            // Usar tiempo según el modo seleccionado
+            if (currentMode === 'auto-advance') {
+                timer = parseFloat(autoAdvanceTime) || 3;
+            } else {
+                timer = memorizationTime;
+            }
+            
+            document.getElementById('setup-phase').classList.add('hidden');
+            document.getElementById('memorization-phase').classList.remove('hidden');
+            
+            updateDisplay();
+            
+            // Actualizar timer inicial
+            document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+            
+            // Actualizar mensaje de memorización
+            const memorizationInfo = document.getElementById('memorization-info');
+            if (currentMode === 'auto-advance') {
+                const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
+                if (numbersPerPage === 1) {
+                    memorizationInfo.textContent = `Ronda ${currentRound} - Número 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                } else {
+                    memorizationInfo.textContent = `Ronda ${currentRound} - Página 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                }
+            } else {
+                memorizationInfo.textContent = `Ronda ${currentRound} - Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+            }
+            
+            // Configurar captura global de teclas para memorización
+            window.cleanupKeyCapture = setupGlobalKeyCapture();
+            
+            // Registrar tiempo de inicio de memorización
+            memorizationStartTime = Date.now();
+            
+            startTimer();
+        }
+
+        // Actualizar pantalla de memorización
+        function updateDisplay() {
+            const display = document.getElementById('number-display');
+            const progress = document.getElementById('progress');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            if (numberSequence.length === 0) {
+                display.textContent = 'No hay números para mostrar';
+                return;
+            }
+            
+            if (numbersPerPage === 1) {
+                // Mostrar 1 número por página
+                const currentNumber = numberSequence[currentNumberIndex];
+                display.textContent = currentNumber;
+                progress.textContent = `Número ${currentNumberIndex + 1} de ${numberSequence.length}`;
+                
+                // Actualizar botones de navegación
+                prevBtn.disabled = currentNumberIndex === 0;
+                nextBtn.disabled = currentNumberIndex >= numberSequence.length - 1;
+            } else {
+                // Mostrar 2 números por página
+                let numbersToShow = [];
+                let numbersInThisPage = 0;
+                
+                // Si estamos en la última página y hay un número impar, mostrar solo 1
+                if (currentNumberIndex + 2 >= numberSequence.length && numberSequence.length % 2 === 1) {
+                    numbersInThisPage = 1;
+                } else {
+                    numbersInThisPage = 2;
+                }
+                
+                // Obtener los números para mostrar
+                for (let i = 0; i < numbersInThisPage && currentNumberIndex + i < numberSequence.length; i++) {
+                    numbersToShow.push(numberSequence[currentNumberIndex + i]);
+                }
+                
+                display.textContent = numbersToShow.join(' ');
+                progress.textContent = `Números ${currentNumberIndex + 1}-${currentNumberIndex + numbersInThisPage} de ${numberSequence.length}`;
+                
+                // Actualizar botones de navegación
+                prevBtn.disabled = currentNumberIndex === 0;
+                nextBtn.disabled = currentNumberIndex + numbersInThisPage >= numberSequence.length;
+            }
+        }
+
+        // Navegación
+        function previousNumber() {
+            if (currentNumberIndex > 0) {
+                if (numbersPerPage === 1) {
+                    currentNumberIndex--;
+                } else {
+                    // Retroceder 2 posiciones siempre
+                    currentNumberIndex = Math.max(0, currentNumberIndex - 2);
+                }
+                updateDisplay();
+                
+                // Reiniciar timer si estamos en modo autoavance
+                if (currentMode === 'auto-advance') {
+                    clearInterval(timerInterval);
+                    timer = parseFloat(autoAdvanceTime) || 3;
+                    document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                    document.getElementById('elapsed-time').textContent = `Tiempo empleado: 0.0 segundos`;
+                    startTimer();
+                }
+            }
+        }
+
+        function nextNumber() {
+            if (numbersPerPage === 1) {
+                if (currentNumberIndex < numberSequence.length - 1) {
+                    currentNumberIndex++;
+                    updateDisplay();
+                    
+                    // Reiniciar timer si estamos en modo autoavance
+                    if (currentMode === 'auto-advance') {
+                        clearInterval(timerInterval);
+                        timer = parseFloat(autoAdvanceTime) || 3;
+                        document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                        document.getElementById('elapsed-time').textContent = `Tiempo empleado: 0.0 segundos`;
+                        startTimer();
+                    }
+                }
+            } else {
+                // Avanzar 2 posiciones siempre, excepto si estamos cerca del final
+                if (currentNumberIndex + 2 < numberSequence.length) {
+                    currentNumberIndex += 2;
+                    updateDisplay();
+                    
+                    // Reiniciar timer si estamos en modo autoavance
+                    if (currentMode === 'auto-advance') {
+                        clearInterval(timerInterval);
+                        timer = parseFloat(autoAdvanceTime) || 3;
+                        document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                        document.getElementById('elapsed-time').textContent = `Tiempo empleado: 0.0 segundos`;
+                        startTimer();
+                    }
+                }
+            }
+        }
+
+        // Timer para fase de memorización
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            const startTime = Date.now();
+            const targetTime = startTime + (timer * 1000);
+            
+            timerInterval = setInterval(() => {
+                const currentTime = Date.now();
+                const remainingTime = Math.max(0, (targetTime - currentTime) / 1000);
+                const elapsedTime = ((currentTime - startTime) / 1000).toFixed(1);
+                
+                timer = remainingTime;
+                
+                if (timer <= 0) {
+                    if (currentMode === 'auto-advance') {
+                        // En modo autoavance, avanzar a la siguiente página
+                        advanceToNextPage();
+                    } else {
+                        // En modo normal, terminar memorización
+                        finishMemorization();
+                    }
+                } else {
+                    document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                    document.getElementById('elapsed-time').textContent = `Tiempo empleado: ${elapsedTime} segundos`;
+                }
+            }, 100); // Actualizar cada 100ms para mayor precisión con decimales
+        }
+
+        // Avanzar a la siguiente página en modo autoavance
+        function advanceToNextPage() {
+            const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
+            const currentPage = Math.floor(currentNumberIndex / numbersPerPage) + 1;
+            
+            if (currentPage < totalPages) {
+                // Avanzar a la siguiente página
+                if (numbersPerPage === 1) {
+                    currentNumberIndex++;
+                } else {
+                    currentNumberIndex += 2;
+                }
+                updateDisplay();
+                
+                // Reiniciar timer para la nueva página
+                timer = parseFloat(autoAdvanceTime) || 3;
+                document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                document.getElementById('elapsed-time').textContent = `Tiempo empleado: 0.0 segundos`;
+                
+                // Reiniciar el timer con el nuevo valor
+                clearInterval(timerInterval);
+                startTimer();
+                
+                // Actualizar mensaje de progreso
+                const memorizationInfo = document.getElementById('memorization-info');
+                if (numbersPerPage === 1) {
+                    memorizationInfo.textContent = `Número ${currentPage + 1} de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                } else {
+                    memorizationInfo.textContent = `Página ${currentPage + 1} de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                }
+            } else {
+                // Llegamos a la última página, terminar memorización
+                finishMemorization();
+            }
+        }
+
+        // Terminar memorización manualmente
+        function finishMemorization() {
+            clearInterval(timerInterval);
+            
+            // Calcular tiempo real de memorización
+            actualMemorizationTime = ((Date.now() - memorizationStartTime) / 1000).toFixed(1);
+            
+            gameState = 'input';
+            document.getElementById('memorization-phase').classList.add('hidden');
+            document.getElementById('input-phase').classList.remove('hidden');
+            
+            // Limpiar todos los campos antes de generar la cuadrícula
+            clearAllInputs();
+            
+            // Generar cuadrícula de dígitos
+            generateDigitsGrid();
+            
+            // Configurar captura global de teclas
+            window.cleanupKeyCapture = setupGlobalKeyCapture();
+            
+            // Iniciar timer de recall
+            startRecallTimer();
+            
+            // Mostrar tiempo real de memorización en la fase de input
+            document.getElementById('recall-timer-display').insertAdjacentHTML('afterend', `<div id="memorization-time-info" style="font-size:1.1rem;color:#1976d2;margin:10px 0 0 0;">Tiempo de memorización: <b>${actualMemorizationTime}</b> segundos</div>`);
+            
+            // Guardar el tiempo de memorización para la ronda actual inmediatamente
+            if (!window.roundMemTimes) window.roundMemTimes = [];
+            // Asegurar que el array tenga el tamaño correcto
+            while (window.roundMemTimes.length < currentRound) {
+                window.roundMemTimes.push(null);
+            }
+            window.roundMemTimes[currentRound - 1] = actualMemorizationTime;
+            
+            // Actualizar la progresión de rondas para mostrar el tiempo de la ronda actual
+            updateProgressDisplay();
+        }
+
+        // Generar cuadrícula de dígitos
+        function generateDigitsGrid() {
+            const container = document.getElementById('digits-input-container');
+            container.innerHTML = '';
+            
+            const totalDigits = numberSequence.length * 3; // 3 dígitos por número
+            let digitIndex = 0;
+            
+            // Crear todos los inputs en una sola fila horizontal
+            for (let numberIndex = 0; numberIndex < numberSequence.length; numberIndex++) {
+                // Crear 3 inputs para los dígitos del número
+                for (let digitPos = 0; digitPos < 3; digitPos++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'digit-input';
+                    input.maxLength = 1;
+                    input.dataset.digitIndex = digitIndex;
+                    input.dataset.numberIndex = numberIndex;
+                    input.dataset.digitPosition = digitPos;
+                    input.placeholder = '_';
+                    input.value = ''; // Asegurar que esté vacío
+                    
+                    // Evento para sincronizar con el input continuo
+                    input.addEventListener('input', function(e) {
+                        // Limpiar el valor anterior y establecer solo el nuevo dígito
+                        const value = e.target.value;
+                        if (value.length > 1) {
+                            // Si hay más de un carácter, mantener solo el último
+                            e.target.value = value.slice(-1);
+                        }
+                        syncContinuousInput();
+                    });
+                    
+                    // Evento para mover al siguiente input automáticamente
+                    input.addEventListener('input', function(e) {
+                        const value = e.target.value;
+                        if (value.length === 1 && /^\d$/.test(value)) {
+                            const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
+                            if (nextInput) {
+                                nextInput.focus();
+                            }
+                        }
+                    });
+                    
+                    // Evento para permitir clic directo en cualquier dígito
+                    input.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        this.focus();
+                        this.select();
+                    });
+                    
+                    container.appendChild(input);
+                    digitIndex++;
+                }
+                
+                // Agregar separador entre números (excepto después del último)
+                if (numberIndex < numberSequence.length - 1) {
+                    const separator = document.createElement('span');
+                    separator.textContent = ' ';
+                    separator.style.margin = '0 5px';
+                    separator.style.fontSize = '1.2rem';
+                    separator.style.fontWeight = 'bold';
+                    separator.style.color = '#666';
+                    container.appendChild(separator);
+                }
+            }
+            
+            // Asegurar que el input continuo también esté vacío
+            const continuousInput = document.getElementById('continuous-input');
+            if (continuousInput) {
+                continuousInput.value = '';
+            }
+            
+            // Usar setTimeout para asegurar que todos los inputs estén vacíos después de ser creados
+            setTimeout(() => {
+                const allInputs = container.querySelectorAll('.digit-input');
+                allInputs.forEach(input => {
+                    input.value = '';
+                });
+            }, 0);
+        }
+
+        // Configurar captura global de teclas
+        function setupGlobalKeyCapture() {
+            const totalDigits = numberSequence.length * 3;
+            let currentDigitIndex = 0;
+            
+            function handleKeyPress(e) {
+                // Alternar pantalla completa con F11
+                if (e.key === 'F11') {
+                    e.preventDefault();
+                    toggleFullscreen();
+                    return;
+                }
+                
+                // Procesar si estamos en la fase de recall o memorización
+                if (gameState !== 'input' && gameState !== 'memorization') return;
+                
+                // Navegación en fase de memorización
+                if (gameState === 'memorization') {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        previousNumber();
+                        return;
+                    }
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        nextNumber();
+                        return;
+                    }
+                }
+                
+                // Solo procesar si estamos en la fase de recall
+                if (gameState !== 'input') return;
+                
+                // Verificar si algún input de dígito tiene el foco (edición directa)
+                const focusedDigitInput = document.querySelector('.digit-input:focus');
+                const focusedContinuousInput = document.querySelector('#continuous-input:focus');
+                
+                // Si el input continuo tiene foco, no procesar globalmente
+                if (focusedContinuousInput) {
+                    return;
+                }
+                
+                // Si un input de dígito tiene foco, permitir edición directa
+                if (focusedDigitInput) {
+                    // Para números, permitir que el input maneje su propia edición y avanzar automáticamente
+                    if (/^\d$/.test(e.key)) {
+                        focusedDigitInput.value = e.key; // Ensure replacement
+                        setTimeout(() => {
+                            const nextInput = focusedDigitInput.parentElement.parentElement.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) + 1}"]`);
+                            if (nextInput) {
+                                nextInput.focus();
+                            }
+                        }, 50);
+                        return;
+                    }
+                    
+                    // Para flechas, permitir navegación
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        const nextInput = focusedDigitInput.parentElement.parentElement.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) + 1}"]`);
+                        if (nextInput) {
+                            nextInput.focus();
+                        }
+                        return;
+                    }
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const prevInput = focusedDigitInput.parentElement.parentElement.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) - 1}"]`);
+                        if (prevInput) {
+                            prevInput.focus();
+                        }
+                        return;
+                    }
+                    
+                    return;
+                }
+                
+                // Solo procesar números si ningún input de dígito tiene foco (escritura continua)
+                if (/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                    
+                    const inputs = document.querySelectorAll('.digit-input');
+                    
+                    if (currentDigitIndex < inputs.length) {
+                        // Reemplazar el contenido anterior con el nuevo dígito
+                        inputs[currentDigitIndex].value = e.key;
+                        currentDigitIndex++;
+                        
+                        // Sincronizar con input continuo
+                        syncContinuousInput();
+                    }
+                }
+                
+                // Manejar Backspace solo si ningún input tiene foco
+                if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    if (currentDigitIndex > 0) {
+                        currentDigitIndex--;
+                        const inputs = document.querySelectorAll('.digit-input');
+                        inputs[currentDigitIndex].value = '';
+                        inputs[currentDigitIndex].focus();
+                        syncContinuousInput();
+                    }
+                }
+                
+                // Manejar flechas solo si ningún input tiene foco
+                if (e.key === 'ArrowLeft' && currentDigitIndex > 0) {
+                    e.preventDefault();
+                    currentDigitIndex--;
+                    const inputs = document.querySelectorAll('.digit-input');
+                    inputs[currentDigitIndex].focus();
+                }
+                
+                if (e.key === 'ArrowRight' && currentDigitIndex < totalDigits) {
+                    e.preventDefault();
+                    currentDigitIndex++;
+                    const inputs = document.querySelectorAll('.digit-input');
+                    if (currentDigitIndex < inputs.length) {
+                        inputs[currentDigitIndex].focus();
+                    }
+                }
+            }
+            
+            // Limpiar event listeners anteriores si existen
+            if (window.currentKeyCaptureHandler) {
+                document.removeEventListener('keydown', window.currentKeyCaptureHandler);
+            }
+            
+            // Guardar referencia al handler actual
+            window.currentKeyCaptureHandler = handleKeyPress;
+            
+            // Agregar event listener global
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Retornar función para limpiar
+            return () => {
+                if (window.currentKeyCaptureHandler) {
+                    document.removeEventListener('keydown', window.currentKeyCaptureHandler);
+                    window.currentKeyCaptureHandler = null;
+                }
+            };
+        }
+
+        // Sincronizar input continuo con cuadrícula de dígitos
+        function syncContinuousInput() {
+            const inputs = document.querySelectorAll('.digit-input');
+            const continuousInput = document.getElementById('continuous-input');
+            
+            if (continuousInput) {
+                const values = Array.from(inputs).map(input => input.value).join('');
+                continuousInput.value = values;
+            }
+        }
+
+        // Sincronizar cuadrícula de dígitos con input continuo
+        function syncDigitsGrid() {
+            const continuousInput = document.getElementById('continuous-input');
+            const inputs = document.querySelectorAll('.digit-input');
+            
+            if (continuousInput) {
+                const value = continuousInput.value.replace(/\D/g, ''); // Solo números
+                const digits = value.split('');
+                
+                inputs.forEach((input, index) => {
+                    input.value = digits[index] || '';
+                });
+            }
+        }
+
+        // Timer para fase de recall
+        function startRecallTimer() {
+            const startTime = Date.now();
+            const targetTime = startTime + (recallTime * 1000);
+            let recallTimeLeft = recallTime;
+            
+            document.getElementById('recall-timer-display').textContent = `Tiempo restante: ${recallTimeLeft.toFixed(1)} segundos`;
+            
+            recallTimerInterval = setInterval(() => {
+                const currentTime = Date.now();
+                recallTimeLeft = Math.max(0, (targetTime - currentTime) / 1000);
+                
+                document.getElementById('recall-timer-display').textContent = `Tiempo restante: ${recallTimeLeft.toFixed(1)} segundos`;
+                
+                if (recallTimeLeft <= 0) {
+                    clearInterval(recallTimerInterval);
+                    checkAnswer();
+                }
+            }, 100); // Actualizar cada 100ms para mayor precisión con decimales
+        }
+
+
+
+        // Mostrar números de nuevo
+        function showNumberAgain() {
+            if (currentMode === 'auto-advance') return; // No permitir en modo autoavance
+            
+            document.getElementById('input-phase').classList.add('hidden');
+            document.getElementById('memorization-phase').classList.remove('hidden');
+            currentNumberIndex = 0;
+            updateDisplay();
+            timer = memorizationTime;
+            document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+            
+            // Actualizar mensaje de memorización
+            const memorizationInfo = document.getElementById('memorization-info');
+            memorizationInfo.textContent = `Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+            
+            startTimer();
+            
+            // Configurar captura global de teclas
+            window.cleanupKeyCapture = setupGlobalKeyCapture();
+        }
+
+                 // Verificar respuesta
+         function checkAnswer() {
+             // Limpiar captura global de teclas
+             if (window.cleanupKeyCapture) {
+                 window.cleanupKeyCapture();
+                 window.cleanupKeyCapture = null;
+             }
+             
+             const inputs = document.querySelectorAll('.digit-input');
+             const userDigits = Array.from(inputs).map(input => input.value);
+             
+             // Convertir dígitos en números de 3 dígitos
+             const userNumbers = [];
+             for (let i = 0; i < userDigits.length; i += 3) {
+                 const number = userDigits.slice(i, i + 3).join('');
+                 userNumbers.push(number);
+             }
+             
+             // Comparar con la secuencia original
+             const correct = userNumbers.length === numberSequence.length && 
+                            userNumbers.every((num, index) => num === numberSequence[index]);
+             
+             isCorrect = correct;
+             
+             // Calcular precisión por dígitos
+             let correctDigits = 0;
+             let totalDigits = 0;
+             
+             for (let i = 0; i < numberSequence.length; i++) {
+                 const correctNumber = numberSequence[i];
+                 const userNumber = userNumbers[i] || '';
+                 
+                 for (let j = 0; j < 3; j++) {
+                     totalDigits++;
+                     if (userNumber[j] === correctNumber[j]) {
+                         correctDigits++;
+                     }
+                 }
+             }
+             
+             const roundAccuracy = totalDigits > 0 ? Math.round((correctDigits / totalDigits) * 100) : 0;
+             
+             // Debug: mostrar valores calculados (comentado para producción)
+             // console.log('Correct digits:', correctDigits);
+             // console.log('Total digits:', totalDigits);
+             // console.log('Round accuracy:', roundAccuracy);
+             
+             // Guardar precisión de la ronda
+             window.roundAccuracies.push(roundAccuracy);
+             
+             // Guardar puntuación de la ronda
+             const roundScore = correct ? 1 : 0;
+             roundScores.push(roundScore);
+             totalScore += roundScore;
+             
+             // Guardar tiempo real de memorización para la ronda actual
+             if (!window.roundMemTimes) window.roundMemTimes = [];
+             window.roundMemTimes.push(actualMemorizationTime);
+             
+             // Calcular resultados detallados y marcar inputs
+             results = userNumbers.map((num, index) => {
+                 const isNumberCorrect = num === numberSequence[index];
+                 
+                 // Marcar los inputs correspondientes
+                 for (let digitPos = 0; digitPos < 3; digitPos++) {
+                     const inputIndex = index * 3 + digitPos;
+                     const input = inputs[inputIndex];
+                     if (input) {
+                         input.classList.remove('correct', 'incorrect');
+                         input.classList.add(isNumberCorrect ? 'correct' : 'incorrect');
+                     }
+                 }
+                 
+                 return {
+                     expected: numberSequence[index],
+                     actual: num,
+                     correct: isNumberCorrect
+                 };
+             });
+             
+             // Detener timers
+             if (timerInterval) clearInterval(timerInterval);
+             if (recallTimerInterval) clearInterval(recallTimerInterval);
+             
+             document.getElementById('input-phase').classList.add('hidden');
+             
+             // Actualizar información de la ronda
+             document.getElementById('current-round-display').textContent = currentRound;
+             document.getElementById('round-number').textContent = currentRound;
+             document.getElementById('total-rounds').textContent = totalRounds;
+             
+             // Actualizar barra de progreso
+             const progressPercentage = (currentRound / totalRounds) * 100;
+             document.getElementById('round-progress-fill').style.width = progressPercentage + '%';
+             
+             // Mostrar botones según si es la última ronda
+             if (currentRound === totalRounds) {
+                 document.getElementById('next-round-btn').style.display = 'none';
+                 document.getElementById('new-game-btn').style.display = 'none';
+                 
+                 // Crear botón de menú si no existe
+                 let menuBtn = document.getElementById('menu-btn');
+                 if (!menuBtn) {
+                     menuBtn = document.createElement('button');
+                     menuBtn.id = 'menu-btn';
+                     menuBtn.className = 'button';
+                     menuBtn.textContent = 'Menú';
+                     menuBtn.onclick = goToMenu;
+                     
+                     // Insertar después del botón de nueva ronda
+                     const nextRoundBtn = document.getElementById('next-round-btn');
+                     if (nextRoundBtn) {
+                         nextRoundBtn.parentNode.insertBefore(menuBtn, nextRoundBtn.nextSibling);
+                     }
+                 }
+                 menuBtn.style.display = 'inline-block';
+             } else {
+                 document.getElementById('next-round-btn').style.display = 'inline-block';
+                 document.getElementById('new-game-btn').textContent = 'Nuevo Juego';
+                 
+                 // Ocultar botón de menú si existe
+                 const menuBtn = document.getElementById('menu-btn');
+                 if (menuBtn) {
+                     menuBtn.style.display = 'none';
+                 }
+             }
+             
+             document.getElementById('result-phase').classList.remove('hidden');
+             
+             const resultMessage = document.getElementById('result-message');
+             
+             if (correct) {
+                 resultMessage.className = 'result-message correct-result';
+                 resultMessage.innerHTML = '¡Correcto! 🎉';
+             } else {
+                 resultMessage.className = 'result-message incorrect-result';
+                 resultMessage.innerHTML = 'Incorrecto ❌';
+             }
+             
+             // Añadir el tiempo real de memorización
+             resultMessage.innerHTML += `<br><span style='font-size:1.1rem;color:#1976d2;'>Tiempo de memorización: <b>${actualMemorizationTime}</b> segundos</span>`;
+             
+             // Crear comparación visual detallada
+             createVisualComparison();
+             
+             // Actualizar progresión de resultados
+             updateProgressDisplay();
+             
+             // Configurar event listeners para la configuración de resultados
+             setupResultConfiguration();
+         }
+         
+         // Función para actualizar la progresión de resultados
+         function updateProgressDisplay() {
+             const roundsList = document.getElementById('rounds-percentage-list');
+             if (!roundsList) return;
+             
+             roundsList.innerHTML = '';
+             
+             // Mostrar todas las rondas (completadas, actual y pendientes)
+             for (let i = 1; i <= totalRounds; i++) {
+                 const roundDiv = document.createElement('div');
+                 roundDiv.style.margin = '10px 0';
+                 roundDiv.style.padding = '10px';
+                 roundDiv.style.borderRadius = '8px';
+                 roundDiv.style.fontWeight = 'bold';
+                 
+                 if (i <= window.roundAccuracies.length) {
+                     // Ronda completada
+                     const accuracy = window.roundAccuracies[i - 1];
+                     const status = accuracy === 100 ? 'Correcto' : 'Incorrecto';
+                     const backgroundColor = accuracy === 100 ? '#d4edda' : '#f8d7da';
+                     const color = accuracy === 100 ? '#155724' : '#721c24';
+                     const borderColor = accuracy === 100 ? '#c3e6cb' : '#f5c6cb';
+                     
+                     roundDiv.style.backgroundColor = backgroundColor;
+                     roundDiv.style.color = color;
+                     roundDiv.style.border = `2px solid ${borderColor}`;
+                     
+                     roundDiv.innerHTML = `Ronda ${i}: ${accuracy}% (${status})`;
+                     
+                     // Mostrar tiempo real de memorización si existe
+                     if (window.roundMemTimes && window.roundMemTimes[i-1]) {
+                         roundDiv.innerHTML += `<br><span style='font-size:1rem;color:#1976d2;'>🕒 ${window.roundMemTimes[i-1]} segundos</span>`;
+                     }
+                 } else if (i === currentRound) {
+                     // Ronda actual
+                     roundDiv.style.backgroundColor = '#e9ecef';
+                     roundDiv.style.color = '#6c757d';
+                     roundDiv.style.border = '2px solid #dee2e6';
+                     roundDiv.innerHTML = `Ronda ${i}: En progreso`;
+                     
+                     // Mostrar tiempo real de memorización si existe para la ronda actual
+                     if (window.roundMemTimes && window.roundMemTimes[i-1]) {
+                         roundDiv.innerHTML += `<br><span style='font-size:1rem;color:#1976d2;'>🕒 ${window.roundMemTimes[i-1]} segundos</span>`;
+                     }
+                 } else {
+                     // Ronda futura
+                     roundDiv.style.backgroundColor = '#f8f9fa';
+                     roundDiv.style.color = '#6c757d';
+                     roundDiv.style.border = '2px solid #dee2e6';
+                     roundDiv.textContent = `Ronda ${i}: Pendiente`;
+                 }
+                 
+                 roundsList.appendChild(roundDiv);
+             }
+         }
+         
+         // Función para ir al menú
+         function goToMenu() {
+             resetGame();
+         }
+
+                 // Función para pasar a la siguiente ronda
+         function nextRound() {
+             currentRound++;
+             
+             if (currentRound > totalRounds) {
+                 // Mostrar resultados finales
+                 showFinalResults();
+             } else {
+                 // Iniciar nueva ronda
+                 startNewRound();
+             }
+         }
+         
+                 // Función para iniciar una nueva ronda
+        function startNewRound() {
+            // Limpiar todos los campos antes de comenzar nueva ronda
+            clearAllInputs();
+            
+            gameState = 'memorization';
+            currentNumberIndex = 0;
+            
+            // Generar nueva secuencia para la ronda
+            generateNumberSequence();
+            
+            // Usar tiempo según el modo seleccionado
+            if (currentMode === 'auto-advance') {
+                timer = parseFloat(autoAdvanceTime) || 3;
+            } else {
+                timer = memorizationTime;
+            }
+            
+            document.getElementById('result-phase').classList.add('hidden');
+            document.getElementById('memorization-phase').classList.remove('hidden');
+            
+            updateDisplay();
+            
+            // Actualizar timer inicial
+            document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+            
+            // Actualizar mensaje de memorización
+            const memorizationInfo = document.getElementById('memorization-info');
+            if (currentMode === 'auto-advance') {
+                const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
+                if (numbersPerPage === 1) {
+                    memorizationInfo.textContent = `Ronda ${currentRound} - Número 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                } else {
+                    memorizationInfo.textContent = `Ronda ${currentRound} - Página 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                }
+            } else {
+                memorizationInfo.textContent = `Ronda ${currentRound} - Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+            }
+            
+            // Configurar captura global de teclas para memorización
+            window.cleanupKeyCapture = setupGlobalKeyCapture();
+            
+            // Registrar tiempo de inicio de memorización
+            memorizationStartTime = Date.now();
+            
+            startTimer();
+        }
+         
+         // Función para mostrar resultados finales
+         function showFinalResults() {
+             document.getElementById('result-phase').classList.add('hidden');
+             document.getElementById('final-results-phase').classList.remove('hidden');
+             
+             // Mostrar puntuación final
+             document.getElementById('final-total-score').textContent = totalScore;
+             const percentage = Math.round((totalScore / totalRounds) * 100);
+             document.getElementById('score-percentage').textContent = percentage + '%';
+             
+             // Generar desglose de rondas
+             const roundsBreakdown = document.getElementById('rounds-breakdown');
+             roundsBreakdown.innerHTML = '';
+             
+             roundScores.forEach((score, index) => {
+                 const roundItem = document.createElement('div');
+                 roundItem.className = `round-item ${score === 1 ? 'correct' : 'incorrect'}`;
+                 roundItem.textContent = `R${index + 1}`;
+                 roundItem.title = `Ronda ${index + 1}: ${score === 1 ? 'Correcto' : 'Incorrecto'}`;
+                 roundsBreakdown.appendChild(roundItem);
+             });
+             
+             // Generar estadísticas de rendimiento
+             const performanceStats = document.getElementById('performance-stats');
+             const correctRounds = roundScores.filter(score => score === 1).length;
+             const incorrectRounds = totalRounds - correctRounds;
+             const bestStreak = calculateBestStreak();
+             
+             performanceStats.innerHTML = `
+                 <p><strong>Rondas correctas:</strong> ${correctRounds} de ${totalRounds}</p>
+                 <p><strong>Rondas incorrectas:</strong> ${incorrectRounds} de ${totalRounds}</p>
+                 <p><strong>Mejor racha:</strong> ${bestStreak} rondas consecutivas</p>
+                 <p><strong>Porcentaje de acierto:</strong> ${percentage}%</p>
+             `;
+         }
+         
+         // Función para calcular la mejor racha
+         function calculateBestStreak() {
+             let currentStreak = 0;
+             let bestStreak = 0;
+             
+             roundScores.forEach(score => {
+                 if (score === 1) {
+                     currentStreak++;
+                     bestStreak = Math.max(bestStreak, currentStreak);
+                 } else {
+                     currentStreak = 0;
+                 }
+             });
+             
+             return bestStreak;
+         }
+         
+         // Función para crear comparación visual detallada
+         function createVisualComparison() {
+             const container = document.getElementById('visual-comparison-container');
+             container.innerHTML = '';
+             
+             const numbersPerRow = 5; // 5 números por fila
+             const totalNumbers = results.length;
+             const totalRows = Math.ceil(totalNumbers / numbersPerRow);
+             
+             // Crear filas alternadas: correcto, usuario, correcto, usuario...
+             for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+                 // Fila de números correctos
+                 const correctRow = document.createElement('div');
+                 correctRow.className = 'comparison-row';
+                 
+                 const correctLabel = document.createElement('div');
+                 correctLabel.className = 'comparison-label';
+                 correctLabel.textContent = 'Correcto:';
+                 correctLabel.style.width = '100px';
+                 correctRow.appendChild(correctLabel);
+                 
+                 const correctNumbers = document.createElement('div');
+                 correctNumbers.className = 'comparison-number';
+                 
+                 // Procesar números para esta fila
+                 const startIndex = rowIndex * numbersPerRow;
+                 const endIndex = Math.min(startIndex + numbersPerRow, totalNumbers);
+                 
+                 for (let i = startIndex; i < endIndex; i++) {
+                     const result = results[i];
+                     const correctNumber = numberSequence[i];
+                     const userNumber = result.actual;
+                     
+                     // Crear 3 dígitos para cada número
+                     for (let digitPos = 0; digitPos < 3; digitPos++) {
+                         const digit = document.createElement('div');
+                         const isDigitCorrect = userNumber[digitPos] === correctNumber[digitPos];
+                         digit.className = `comparison-digit ${isDigitCorrect ? 'correct' : 'incorrect'}`;
+                         digit.textContent = correctNumber[digitPos];
+                         correctNumbers.appendChild(digit);
+                     }
+                     
+                     // Agregar espacio entre números
+                     if (i < endIndex - 1) {
+                         const space = document.createElement('span');
+                         space.textContent = ' ';
+                         space.style.margin = '0 5px';
+                         correctNumbers.appendChild(space);
+                     }
+                 }
+                 
+                 correctRow.appendChild(correctNumbers);
+                 container.appendChild(correctRow);
+                 
+                 // Fila de respuesta del usuario (justo debajo)
+                 const userRow = document.createElement('div');
+                 userRow.className = 'comparison-row';
+                 
+                 const userLabel = document.createElement('div');
+                 userLabel.className = 'comparison-label';
+                 userLabel.textContent = 'Tu respuesta:';
+                 userLabel.style.width = '100px';
+                 userRow.appendChild(userLabel);
+                 
+                 const userNumbers = document.createElement('div');
+                 userNumbers.className = 'comparison-number';
+                 
+                 // Procesar los mismos números para esta fila
+                 for (let i = startIndex; i < endIndex; i++) {
+                     const result = results[i];
+                     const correctNumber = numberSequence[i];
+                     const userNumber = result.actual;
+                     
+                     // Crear 3 dígitos para cada número
+                     for (let digitPos = 0; digitPos < 3; digitPos++) {
+                         const digit = document.createElement('div');
+                         const isDigitCorrect = userNumber[digitPos] === correctNumber[digitPos];
+                         digit.className = `comparison-digit ${isDigitCorrect ? 'correct' : 'incorrect'}`;
+                         digit.textContent = userNumber[digitPos] || '_';
+                         userNumbers.appendChild(digit);
+                     }
+                     
+                     // Agregar espacio entre números
+                     if (i < endIndex - 1) {
+                         const space = document.createElement('span');
+                         space.textContent = ' ';
+                         space.style.margin = '0 5px';
+                         userNumbers.appendChild(space);
+                     }
+                 }
+                 
+                 userRow.appendChild(userNumbers);
+                 container.appendChild(userRow);
+             }
+         }
+         
+         // Función para configurar la configuración en la fase de resultados
+         function setupResultConfiguration() {
+             // Establecer valores actuales en los campos de configuración
+             const resultMemorizationTimer = document.getElementById('result-memorization-timer');
+             const resultAutoAdvanceTime = document.getElementById('result-auto-advance-time');
+             const resultMemorizationMode = document.getElementById('result-memorization-mode');
+             const resultAutoAdvanceMode = document.getElementById('result-auto-advance-mode');
+             
+             if (resultMemorizationTimer) {
+                 resultMemorizationTimer.value = memorizationTime;
+             }
+             if (resultAutoAdvanceTime) {
+                 resultAutoAdvanceTime.value = autoAdvanceTime;
+             }
+             
+             // Configurar modo actual
+             if (currentMode === 'memorization') {
+                 if (resultMemorizationMode) resultMemorizationMode.checked = true;
+                 if (resultAutoAdvanceMode) resultAutoAdvanceMode.checked = false;
+             } else {
+                 if (resultMemorizationMode) resultMemorizationMode.checked = false;
+                 if (resultAutoAdvanceMode) resultAutoAdvanceMode.checked = true;
+             }
+             
+             // Event listeners para configuración de resultados
+             if (resultMemorizationTimer) {
+                 resultMemorizationTimer.addEventListener('input', function() {
+                     if (this.value === '') {
+                         memorizationTime = 0;
+                         updateResultModeDescription();
+                         return;
+                     }
+                     
+                     memorizationTime = parseFloat(this.value) || 0;
+                     updateResultModeDescription();
+                     
+                     // Mostrar conversión de tiempo
+                     const conversionDiv = document.getElementById('result-memorization-time-conversion');
+                     if (memorizationTime > 60) {
+                         conversionDiv.textContent = `(${formatTimeDisplay(memorizationTime)})`;
+                         conversionDiv.style.display = 'block';
+                     } else {
+                         conversionDiv.style.display = 'none';
+                     }
+                 });
+             }
+             
+             if (resultAutoAdvanceTime) {
+                 resultAutoAdvanceTime.addEventListener('input', function() {
+                     if (this.value === '') {
+                         autoAdvanceTime = 0;
+                         updateResultModeDescription();
+                         return;
+                     }
+                     
+                     autoAdvanceTime = parseFloat(this.value) || 0;
+                     updateResultModeDescription();
+                 });
+             }
+             
+             if (resultMemorizationMode) {
+                 resultMemorizationMode.addEventListener('change', function() {
+                     if (this.checked) {
+                         currentMode = 'memorization';
+                         updateResultModeDescription();
+                     }
+                 });
+             }
+             
+             if (resultAutoAdvanceMode) {
+                 resultAutoAdvanceMode.addEventListener('change', function() {
+                     if (this.checked) {
+                         currentMode = 'auto-advance';
+                         updateResultModeDescription();
+                     }
+                 });
+             }
+             
+             // Actualizar descripción inicial
+             updateResultModeDescription();
+         }
+         
+         // Función para actualizar descripción del modo en resultados
+         function updateResultModeDescription() {
+             const description = document.getElementById('result-mode-description');
+             if (currentMode === 'memorization') {
+                 if (memorizationTime > 0) {
+                     description.textContent = `El juego usará el tiempo de memorización configurado (${memorizationTime.toFixed(1)} segundos).`;
+                 } else {
+                     description.textContent = `El juego usará el tiempo de memorización configurado (escribe un tiempo).`;
+                 }
+             } else {
+                 if (autoAdvanceTime > 0) {
+                     const expectedTime = calculateExpectedAutoAdvanceTime();
+                     description.textContent = `El juego avanzará automáticamente cada ${autoAdvanceTime.toFixed(1)} segundos por página (aproximadamente ${expectedTime.toFixed(1)} segundos total).`;
+                 } else {
+                     description.textContent = `El juego avanzará automáticamente cada (escribe tiempo) segundos por página.`;
+                 }
+             }
+         }
+         
+         // Función para alternar pantalla completa
+         function toggleFullscreen() {
+             const fullscreenBtn = document.getElementById('fullscreen-btn');
+             
+             if (!document.fullscreenElement) {
+                 // Entrar en pantalla completa
+                 if (document.documentElement.requestFullscreen) {
+                     document.documentElement.requestFullscreen();
+                 } else if (document.documentElement.webkitRequestFullscreen) {
+                     document.documentElement.webkitRequestFullscreen();
+                 } else if (document.documentElement.msRequestFullscreen) {
+                     document.documentElement.msRequestFullscreen();
+                 }
+                 
+                 fullscreenBtn.textContent = '⛶';
+                 fullscreenBtn.title = 'Salir Pantalla Completa';
+                 fullscreenBtn.classList.add('fullscreen');
+             } else {
+                 // Salir de pantalla completa
+                 if (document.exitFullscreen) {
+                     document.exitFullscreen();
+                 } else if (document.webkitExitFullscreen) {
+                     document.webkitExitFullscreen();
+                 } else if (document.msExitFullscreen) {
+                     document.msExitFullscreen();
+                 }
+                 
+                 fullscreenBtn.textContent = '⛶';
+                 fullscreenBtn.title = 'Pantalla Completa';
+                 fullscreenBtn.classList.remove('fullscreen');
+             }
+         }
+         
+         // Event listener para detectar cambios en pantalla completa
+         document.addEventListener('fullscreenchange', updateFullscreenButton);
+         document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+         document.addEventListener('msfullscreenchange', updateFullscreenButton);
+         
+         // Función para actualizar el botón según el estado de pantalla completa
+         function updateFullscreenButton() {
+             const fullscreenBtn = document.getElementById('fullscreen-btn');
+             
+             if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                 fullscreenBtn.textContent = '⛶';
+                 fullscreenBtn.title = 'Salir Pantalla Completa';
+                 fullscreenBtn.classList.add('fullscreen');
+             } else {
+                 fullscreenBtn.textContent = '⛶';
+                 fullscreenBtn.title = 'Pantalla Completa';
+                 fullscreenBtn.classList.remove('fullscreen');
+             }
+         }
+         
+         // Función para validar si el juego puede comenzar
+         function validateGameStart() {
+             const startButton = document.getElementById('start-game-btn');
+             if (!startButton) return;
+             
+             // Verificar si todos los campos requeridos están completos
+             const isDigitsValid = selectedDigits > 0;
+             const isRoundsValid = totalRounds > 0;
+             const isRecallTimeValid = recallTime > 0;
+             
+             let isTimeValid = false;
+             if (currentMode === 'memorization') {
+                 isTimeValid = memorizationTime > 0;
+             } else {
+                 isTimeValid = autoAdvanceTime > 0;
+             }
+             
+             const canStart = isDigitsValid && isRoundsValid && isTimeValid && isRecallTimeValid;
+             
+             // Aplicar estilos visuales al botón
+             if (canStart) {
+                 startButton.style.opacity = '1';
+                 startButton.style.cursor = 'pointer';
+                 startButton.disabled = false;
+             } else {
+                 startButton.style.opacity = '0.6';
+                 startButton.style.cursor = 'not-allowed';
+                 startButton.disabled = true;
+             }
+         }
+
+         // Reiniciar juego
+         function resetGame() {
+             gameState = 'setup';
+             userInput = '';
+             isCorrect = null;
+             timer = 0;
+             autoAdvanceTimer = 0;
+             currentNumberIndex = 0;
+             numberSequence = [];
+             results = [];
+             
+             // Reiniciar variables de rondas
+             currentRound = 1;
+             roundScores = [];
+             totalScore = 0;
+             window.roundAccuracies = [];
+             
+             // Limpiar captura global de teclas
+             if (window.cleanupKeyCapture) {
+                 window.cleanupKeyCapture();
+                 window.cleanupKeyCapture = null;
+             }
+             
+             document.getElementById('result-phase').classList.add('hidden');
+             document.getElementById('final-results-phase').classList.add('hidden');
+             document.getElementById('setup-phase').classList.remove('hidden');
+             
+             // Limpiar progresión de resultados
+             const roundsList = document.getElementById('rounds-percentage-list');
+             if (roundsList) {
+                 roundsList.innerHTML = '';
+             }
+             
+             // Ocultar botón de menú si existe
+             const menuBtn = document.getElementById('menu-btn');
+             if (menuBtn) {
+                 menuBtn.style.display = 'none';
+             }
+             
+             if (timerInterval) clearInterval(timerInterval);
+             if (recallTimerInterval) clearInterval(recallTimerInterval);
+         }
+
+        // Función para limpiar completamente todos los campos
+        function clearAllInputs() {
+            // Limpiar todos los inputs de dígitos
+            const digitInputs = document.querySelectorAll('.digit-input');
+            digitInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('correct', 'incorrect');
+            });
+            
+            // Limpiar input continuo
+            const continuousInput = document.getElementById('continuous-input');
+            if (continuousInput) {
+                continuousInput.value = '';
+            }
+            
+            // Limpiar contenedor de comparación visual
+            const comparisonContainer = document.getElementById('visual-comparison-container');
+            if (comparisonContainer) {
+                comparisonContainer.innerHTML = '';
+            }
+            
+            // Limpiar también el contenedor de dígitos
+            const digitsContainer = document.getElementById('digits-input-container');
+            if (digitsContainer) {
+                digitsContainer.innerHTML = '';
+            }
+        }
+
+        // Configurar input continuo y limpiar campos al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            const continuousInput = document.getElementById('continuous-input');
+            if (continuousInput) {
+                continuousInput.addEventListener('input', function() {
+                    syncDigitsGrid();
+                });
+            }
+            
+            // Limpiar todos los campos al cargar la página
+            clearAllInputs();
+            
+            // No establecer automáticamente valores por defecto para permitir que el usuario los borre
+            const digitsInput = document.getElementById('digits-input');
+            if (digitsInput && (!digitsInput.value || digitsInput.value === '')) {
+                // No establecer valor automáticamente, solo actualizar la información
+                selectedDigits = 5;
+                const pages = Math.ceil(selectedDigits / numbersPerPage);
+                document.getElementById('selected-info').textContent = `Memorizarás ${selectedDigits} números de 3 dígitos (${pages} páginas)`;
+                updateSummary();
+                updateModeDescription();
+            }
+            
+            // Inicializar input de rondas
+            const roundsInput = document.getElementById('rounds-input');
+            if (roundsInput && (!roundsInput.value || roundsInput.value === '')) {
+                // No establecer valor automáticamente, solo actualizar la información
+                totalRounds = 10;
+                document.getElementById('rounds-info').textContent = `Jugarás ${totalRounds} rondas en total`;
+                updateSummary();
+            }
+            
+            // No establecer automáticamente valores por defecto para permitir que el usuario los borre
+            const memorizationTimer = document.getElementById('memorization-timer');
+            if (memorizationTimer && (!memorizationTimer.value || memorizationTimer.value === '')) {
+                // No establecer valor automáticamente, solo actualizar la información
+                memorizationTime = 15;
+                updateSummary();
+                updateModeDescription();
+            }
+            
+            const recallTimer = document.getElementById('recall-timer');
+            if (recallTimer && (!recallTimer.value || recallTimer.value === '')) {
+                // No establecer valor automáticamente, solo actualizar la información
+                recallTime = 30;
+                updateSummary();
+                updateModeDescription();
+            }
+            
+            const autoAdvanceTimeEl = document.getElementById('auto-advance-time');
+            if (autoAdvanceTimeEl && (!autoAdvanceTimeEl.value || autoAdvanceTimeEl.value === '')) {
+                // No establecer valor automáticamente, solo actualizar la información
+                autoAdvanceTime = 3;
+                updateSummary();
+                updateModeDescription();
+            }
+            
+            // Asegurar que el modo de memorización esté seleccionado por defecto
+            const memorizationMode = document.getElementById('memorization-mode');
+            if (memorizationMode) {
+                memorizationMode.checked = true;
+            }
+            
+            // Event listeners para establecer valores por defecto cuando los campos estén vacíos
+            const memorizationTimerEl = document.getElementById('memorization-timer');
+            if (memorizationTimerEl) {
+                memorizationTimerEl.addEventListener('blur', function() {
+                    if (!this.value || this.value === '') {
+                        this.value = '15';
+                        memorizationTime = 15;
+                        updateSummary();
+                        updateModeDescription();
+                    }
+                });
+                
+                // Permitir borrar completamente el campo
+                memorizationTimerEl.addEventListener('input', function() {
+                    if (this.value === '') {
+                        memorizationTime = 0;
+                        updateSummary();
+                        updateModeDescription();
+                        return;
+                    }
+                    
+                    memorizationTime = parseFloat(this.value) || 0;
+                    updateSummary();
+                    updateModeDescription();
+                    
+                    // Mostrar conversión de tiempo
+                    const conversionDiv = document.getElementById('memorization-time-conversion');
+                    if (memorizationTime > 60) {
+                        conversionDiv.textContent = `(${formatTimeDisplay(memorizationTime)})`;
+                        conversionDiv.style.display = 'block';
+                    } else {
+                        conversionDiv.style.display = 'none';
+                    }
+                });
+            }
+            
+            const recallTimerEl = document.getElementById('recall-timer');
+            if (recallTimerEl) {
+                recallTimerEl.addEventListener('blur', function() {
+                    if (!this.value || this.value === '') {
+                        this.value = '30';
+                        recallTime = 30;
+                        updateSummary();
+                        updateModeDescription();
+                    }
+                });
+                
+                // Permitir borrar completamente el campo
+                recallTimerEl.addEventListener('input', function() {
+                    if (this.value === '') {
+                        recallTime = 0;
+                        updateSummary();
+                        updateModeDescription();
+                        return;
+                    }
+                    
+                    recallTime = parseFloat(this.value) || 0;
+                    updateSummary();
+                    updateModeDescription();
+                    
+                    // Mostrar conversión de tiempo
+                    const conversionDiv = document.getElementById('recall-time-conversion');
+                    if (recallTime > 60) {
+                        conversionDiv.textContent = `(${formatTimeDisplay(recallTime)})`;
+                        conversionDiv.style.display = 'block';
+                    } else {
+                        conversionDiv.style.display = 'none';
+                    }
+                });
+            }
+            
+            const autoAdvanceTimeEl2 = document.getElementById('auto-advance-time');
+            if (autoAdvanceTimeEl2) {
+                autoAdvanceTimeEl2.addEventListener('blur', function() {
+                    if (!this.value || this.value === '') {
+                        this.value = '3';
+                        autoAdvanceTime = 3;
+                        updateSummary();
+                        updateModeDescription();
+                    }
+                });
+                
+                // Permitir borrar completamente el campo
+                autoAdvanceTimeEl2.addEventListener('input', function() {
+                    if (this.value === '') {
+                        autoAdvanceTime = 0;
+                        updateSummary();
+                        updateModeDescription();
+                        return;
+                    }
+                    
+                    autoAdvanceTime = parseFloat(this.value) || 0;
+                    updateSummary();
+                    updateModeDescription();
+                });
+            }
+            
+            // Event listeners para el input de rondas
+            const roundsInputEl = document.getElementById('rounds-input');
+            if (roundsInputEl) {
+                roundsInputEl.addEventListener('blur', function() {
+                    if (!this.value || this.value === '') {
+                        this.value = '10';
+                        totalRounds = 10;
+                        document.getElementById('rounds-info').textContent = `Jugarás ${totalRounds} rondas en total`;
+                        updateSummary();
+                    }
+                });
+                
+                // Permitir borrar completamente el campo
+                roundsInputEl.addEventListener('input', function() {
+                    if (this.value === '') {
+                        totalRounds = 0;
+                        document.getElementById('rounds-info').textContent = 'Escribe cuántas rondas quieres jugar';
+                        updateSummary();
+                        validateGameStart();
+                        return;
+                    }
+                    
+                    totalRounds = parseInt(this.value) || 0;
+                    if (totalRounds < 1) totalRounds = 1;
+                    if (totalRounds > 100) totalRounds = 100;
+                    this.value = totalRounds;
+                    
+                    document.getElementById('rounds-info').textContent = `Jugarás ${totalRounds} rondas en total`;
+                    updateSummary();
+                    validateGameStart();
+                });
+            }
+            
+                         // Actualizar resumen y descripción inicial
+             updateSummary();
+             updateModeDescription();
+             validateGameStart();
+        });
+    </script>
+</body>
+</html> 
