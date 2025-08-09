@@ -1644,10 +1644,22 @@
                         
                         // Mover al siguiente input automáticamente si se ingresó un dígito válido
                         if (value.length === 1 && /^\d$/.test(value)) {
-                            const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
-                            if (nextInput) {
-                                nextInput.focus();
-                            }
+                            setTimeout(() => {
+                                moveToNextInput(this);
+                            }, 100); // Pequeño delay para asegurar que el valor se establezca
+                        }
+                    });
+                    
+                    // Evento para manejar la entrada antes de que se procese (más confiable en móviles)
+                    input.addEventListener('beforeinput', function(e) {
+                        // En móviles, este evento puede ser más confiable que 'input'
+                        if ('ontouchstart' in window && e.data && /^\d$/.test(e.data)) {
+                            // Programar la navegación para después de que el valor se establezca
+                            setTimeout(() => {
+                                if (this.value.length === 1 && /^\d$/.test(this.value)) {
+                                    moveToNextInput(this);
+                                }
+                            }, 150);
                         }
                     });
                     
@@ -1684,6 +1696,60 @@
                         // Prevenir otras teclas
                         e.preventDefault();
                     });
+                    
+                    // Eventos específicos para móviles
+                    if ('ontouchstart' in window) {
+                        // Evento para manejar el teclado virtual en móviles
+                        input.addEventListener('keyup', function(e) {
+                            // En móviles, el teclado virtual puede no disparar 'input' inmediatamente
+                            // así que verificamos el valor después de keyup
+                            setTimeout(() => {
+                                const value = this.value;
+                                if (value.length === 1 && /^\d$/.test(value)) {
+                                    moveToNextInput(this);
+                                }
+                            }, 50);
+                        });
+                        
+                        // Evento para manejar cuando el teclado virtual se abre
+                        input.addEventListener('focus', function(e) {
+                            // En móviles, asegurar que el input esté visible cuando se abre el teclado
+                            setTimeout(() => {
+                                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 300);
+                        });
+                        
+                        // Evento para manejar la composición de texto (importante para teclados virtuales)
+                        input.addEventListener('compositionend', function(e) {
+                            setTimeout(() => {
+                                const value = this.value;
+                                if (value.length === 1 && /^\d$/.test(value)) {
+                                    moveToNextInput(this);
+                                }
+                            }, 50);
+                        });
+                        
+                        // Evento para manejar cuando el usuario termina de escribir
+                        input.addEventListener('blur', function(e) {
+                            // Verificar si el valor es válido cuando el input pierde el foco
+                            setTimeout(() => {
+                                const value = this.value;
+                                if (value.length === 1 && /^\d$/.test(value)) {
+                                    moveToNextInput(this);
+                                }
+                            }, 100);
+                        });
+                        
+                        // Evento para manejar cambios en el valor (importante para teclados virtuales)
+                        input.addEventListener('change', function(e) {
+                            setTimeout(() => {
+                                const value = this.value;
+                                if (value.length === 1 && /^\d$/.test(value)) {
+                                    moveToNextInput(this);
+                                }
+                            }, 50);
+                        });
+                    }
                     
 
                     
@@ -1822,9 +1888,15 @@
                     return;
                 }
                 
-                // En dispositivos móviles, deshabilitar la captura global de teclas para números
-                // para permitir que el teclado virtual funcione normalmente
+                // En dispositivos móviles, solo permitir navegación con flechas y backspace
+                // pero no la escritura continua global
                 if (isMobile) {
+                    // Solo manejar navegación con flechas y backspace en móviles
+                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Backspace') {
+                        // Permitir que los inputs individuales manejen estos eventos
+                        return;
+                    }
+                    // Para números en móviles, dejar que los inputs individuales los manejen
                     return;
                 }
                 
@@ -1925,6 +1997,18 @@
                     continuousInput.setSelectionRange(length, length);
                 }
             }
+        }
+        
+        // Función para navegar automáticamente al siguiente input
+        function moveToNextInput(currentInput) {
+            const currentIndex = parseInt(currentInput.dataset.digitIndex);
+            const nextInput = document.querySelector(`[data-digit-index="${currentIndex + 1}"]`);
+            if (nextInput) {
+                nextInput.focus();
+                nextInput.select();
+                return true;
+            }
+            return false;
         }
 
         // Timer para fase de recall
