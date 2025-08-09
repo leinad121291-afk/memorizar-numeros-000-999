@@ -354,11 +354,39 @@
             text-align: center;
             font-family: 'Courier New', monospace;
             margin: 10px 0;
+            /* Mejorar experiencia en móviles */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            /* Prevenir zoom en iOS */
+            font-size: 16px;
         }
 
         .continuous-input:focus {
             outline: none;
             border-color: #667eea;
+        }
+        
+        /* Mejorar experiencia en móviles */
+        @media (max-width: 768px) {
+            .continuous-input {
+                font-size: 18px; /* Tamaño mínimo para evitar zoom en iOS */
+                padding: 20px 15px; /* Más padding para facilitar el toque */
+                border-width: 2px;
+                border-radius: 8px;
+                /* Asegurar que el input sea fácil de tocar */
+                min-height: 44px;
+            }
+            
+            .continuous-input-container {
+                margin: 30px 0;
+                padding: 25px;
+            }
+            
+            .input-hint {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
         }
 
         .input-hint {
@@ -391,6 +419,10 @@
             color: #333;
             font-family: 'Courier New', monospace;
             transition: all 0.3s;
+            /* Mejorar experiencia en móviles */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .digit-input:focus {
@@ -619,16 +651,19 @@
             }
 
             .digits-grid {
-                gap: 2px;
+                gap: 5px;
                 max-width: 100%;
+                padding: 15px;
             }
 
             .digit-input {
-                width: 16px;
-                height: 16px;
-                font-size: 0.6rem;
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
                 border-width: 1px;
-                border-radius: 2px;
+                border-radius: 6px;
+                /* Asegurar que sea fácil de tocar */
+                min-height: 35px;
             }
             
             .number-pair {
@@ -799,6 +834,7 @@
                 <input type="text" id="continuous-input" class="continuous-input" placeholder="Escribe todos los números seguidos aquí..." maxlength="999">
                 <p class="input-hint">Simplemente escribe los números y se distribuirán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
                 <p class="input-hint" style="color: #007bff; font-weight: bold;">💡 Tip: Puedes escribir directamente sin hacer clic en ningún lugar. Solo presiona las teclas numéricas y se llenarán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
+                <p class="input-hint" id="mobile-hint" style="color: #28a745; font-weight: bold; display: none;">📱 En móviles: Toca el campo de arriba y escribe los números usando el teclado virtual. Los números se distribuirán automáticamente.</p>
             </div>
             
             <div id="digits-input-container" class="digits-grid"></div>
@@ -1593,20 +1629,20 @@
                     input.placeholder = '_';
                     input.value = ''; // Asegurar que esté vacío
                     
-                    // Evento para sincronizar con el input continuo
+                    // Evento unificado para manejar input y navegación automática
                     input.addEventListener('input', function(e) {
-                        // Limpiar el valor anterior y establecer solo el nuevo dígito
                         const value = e.target.value;
+                        
+                        // Limpiar el valor anterior y establecer solo el nuevo dígito
                         if (value.length > 1) {
                             // Si hay más de un carácter, mantener solo el último
                             e.target.value = value.slice(-1);
                         }
+                        
+                        // Sincronizar con el input continuo
                         syncContinuousInput();
-                    });
-                    
-                    // Evento para mover al siguiente input automáticamente
-                    input.addEventListener('input', function(e) {
-                        const value = e.target.value;
+                        
+                        // Mover al siguiente input automáticamente si se ingresó un dígito válido
                         if (value.length === 1 && /^\d$/.test(value)) {
                             const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
                             if (nextInput) {
@@ -1615,12 +1651,41 @@
                         }
                     });
                     
-                    // Evento para permitir clic directo en cualquier dígito
+                    // Evento para permitir sobreescribir al hacer clic
                     input.addEventListener('click', function(e) {
                         e.stopPropagation();
                         this.focus();
-                        this.select();
+                        this.select(); // Seleccionar todo el contenido para sobreescribir
                     });
+                    
+                    // Evento para permitir sobreescribir al hacer foco
+                    input.addEventListener('focus', function(e) {
+                        this.select(); // Seleccionar todo el contenido para sobreescribir
+                    });
+                    
+                    // Evento para permitir sobreescribir al hacer doble clic
+                    input.addEventListener('dblclick', function(e) {
+                        e.stopPropagation();
+                        this.select(); // Seleccionar todo el contenido para sobreescribir
+                    });
+                    
+                    // Evento para manejar teclas específicas
+                    input.addEventListener('keydown', function(e) {
+                        // Permitir números, backspace, flechas y tab
+                        if (/^\d$/.test(e.key) || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Tab') {
+                            // Si es un número, sobreescribir el contenido actual
+                            if (/^\d$/.test(e.key)) {
+                                this.value = '';
+                                // El evento input se encargará de establecer el valor
+                            }
+                            return; // Permitir el comportamiento por defecto
+                        }
+                        
+                        // Prevenir otras teclas
+                        e.preventDefault();
+                    });
+                    
+
                     
                     container.appendChild(input);
                     digitIndex++;
@@ -1642,6 +1707,13 @@
             const continuousInput = document.getElementById('continuous-input');
             if (continuousInput) {
                 continuousInput.value = '';
+                
+                // En móviles, enfocar automáticamente el input continuo para mejor experiencia
+                if ('ontouchstart' in window) {
+                    setTimeout(() => {
+                        continuousInput.focus();
+                    }, 500);
+                }
             }
             
             // Usar setTimeout para asegurar que todos los inputs estén vacíos después de ser creados
@@ -1659,6 +1731,9 @@
             let currentDigitIndex = 0;
             
             function handleKeyPress(e) {
+                // Detectar si estamos en un dispositivo móvil
+                const isMobile = 'ontouchstart' in window;
+                
                 // Alternar pantalla completa con F11
                 if (e.key === 'F11') {
                     e.preventDefault();
@@ -1697,13 +1772,16 @@
                 
                 // Si un input de dígito tiene foco, permitir edición directa
                 if (focusedDigitInput) {
-                    // Para números, permitir que el input maneje su propia edición y avanzar automáticamente
+                    // Para números, sobreescribir el contenido y avanzar automáticamente
                     if (/^\d$/.test(e.key)) {
-                        focusedDigitInput.value = e.key; // Ensure replacement
+                        e.preventDefault();
+                        focusedDigitInput.value = e.key;
+                        focusedDigitInput.select(); // Seleccionar para facilitar sobreescritura
                         setTimeout(() => {
-                            const nextInput = focusedDigitInput.parentElement.parentElement.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) + 1}"]`);
+                            const nextInput = document.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) + 1}"]`);
                             if (nextInput) {
                                 nextInput.focus();
+                                nextInput.select(); // Seleccionar el siguiente input
                             }
                         }, 50);
                         return;
@@ -1712,21 +1790,41 @@
                     // Para flechas, permitir navegación
                     if (e.key === 'ArrowRight') {
                         e.preventDefault();
-                        const nextInput = focusedDigitInput.parentElement.parentElement.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) + 1}"]`);
+                        const nextInput = document.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) + 1}"]`);
                         if (nextInput) {
                             nextInput.focus();
+                            nextInput.select(); // Seleccionar el input al navegar
                         }
                         return;
                     }
                     if (e.key === 'ArrowLeft') {
                         e.preventDefault();
-                        const prevInput = focusedDigitInput.parentElement.parentElement.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) - 1}"]`);
+                        const prevInput = document.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) - 1}"]`);
                         if (prevInput) {
                             prevInput.focus();
+                            prevInput.select(); // Seleccionar el input al navegar
                         }
                         return;
                     }
                     
+                    // Para backspace, permitir borrar y retroceder
+                    if (e.key === 'Backspace') {
+                        e.preventDefault();
+                        focusedDigitInput.value = '';
+                        const prevInput = document.querySelector(`[data-digit-index="${parseInt(focusedDigitInput.dataset.digitIndex) - 1}"]`);
+                        if (prevInput) {
+                            prevInput.focus();
+                            prevInput.select();
+                        }
+                        return;
+                    }
+                    
+                    return;
+                }
+                
+                // En dispositivos móviles, deshabilitar la captura global de teclas para números
+                // para permitir que el teclado virtual funcione normalmente
+                if (isMobile) {
                     return;
                 }
                 
@@ -1819,6 +1917,13 @@
                 inputs.forEach((input, index) => {
                     input.value = digits[index] || '';
                 });
+                
+                // En móviles, mantener el foco en el input continuo para mejor experiencia
+                if ('ontouchstart' in window && continuousInput === document.activeElement) {
+                    // Asegurar que el cursor esté al final del texto
+                    const length = continuousInput.value.length;
+                    continuousInput.setSelectionRange(length, length);
+                }
             }
         }
 
@@ -2547,10 +2652,44 @@
 
         // Configurar input continuo y limpiar campos al cargar
         document.addEventListener('DOMContentLoaded', function() {
+            // Detectar si es un dispositivo móvil y mostrar mensaje específico
+            if ('ontouchstart' in window) {
+                const mobileHint = document.getElementById('mobile-hint');
+                if (mobileHint) {
+                    mobileHint.style.display = 'block';
+                }
+            }
+            
             const continuousInput = document.getElementById('continuous-input');
             if (continuousInput) {
+                // Mejorar la compatibilidad con dispositivos móviles
                 continuousInput.addEventListener('input', function() {
                     syncDigitsGrid();
+                });
+                
+                // Agregar eventos específicos para móviles
+                continuousInput.addEventListener('touchstart', function(e) {
+                    // Prevenir zoom en dispositivos móviles
+                    e.preventDefault();
+                    this.focus();
+                });
+                
+                continuousInput.addEventListener('focus', function() {
+                    // En móviles, asegurar que el input esté visible cuando se abre el teclado
+                    if ('ontouchstart' in window) {
+                        setTimeout(() => {
+                            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
+                    }
+                });
+                
+                // Mejorar la experiencia en móviles con el teclado virtual
+                continuousInput.addEventListener('keydown', function(e) {
+                    // En móviles, permitir que el teclado virtual funcione normalmente
+                    if ('ontouchstart' in window) {
+                        // No prevenir el comportamiento por defecto en móviles
+                        return;
+                    }
                 });
             }
             
