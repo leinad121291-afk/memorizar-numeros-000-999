@@ -1629,37 +1629,25 @@
                     input.placeholder = '_';
                     input.value = ''; // Asegurar que esté vacío
                     
-                    // Evento unificado para manejar input y navegación automática
+                    // Evento para sincronizar con el input continuo
                     input.addEventListener('input', function(e) {
-                        const value = e.target.value;
-                        
                         // Limpiar el valor anterior y establecer solo el nuevo dígito
+                        const value = e.target.value;
                         if (value.length > 1) {
                             // Si hay más de un carácter, mantener solo el último
                             e.target.value = value.slice(-1);
                         }
-                        
-                        // Sincronizar con el input continuo
                         syncContinuousInput();
-                        
-                        // Mover al siguiente input automáticamente si se ingresó un dígito válido
-                        if (value.length === 1 && /^\d$/.test(value)) {
-                            setTimeout(() => {
-                                moveToNextInput(this);
-                            }, 100); // Pequeño delay para asegurar que el valor se establezca
-                        }
                     });
                     
-                    // Evento para manejar la entrada antes de que se procese (más confiable en móviles)
-                    input.addEventListener('beforeinput', function(e) {
-                        // En móviles, este evento puede ser más confiable que 'input'
-                        if ('ontouchstart' in window && e.data && /^\d$/.test(e.data)) {
-                            // Programar la navegación para después de que el valor se establezca
-                            setTimeout(() => {
-                                if (this.value.length === 1 && /^\d$/.test(this.value)) {
-                                    moveToNextInput(this);
-                                }
-                            }, 150);
+                    // Evento para mover al siguiente input automáticamente
+                    input.addEventListener('input', function(e) {
+                        const value = e.target.value;
+                        if (value.length === 1 && /^\d$/.test(value)) {
+                            const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
+                            if (nextInput) {
+                                nextInput.focus();
+                            }
                         }
                     });
                     
@@ -1697,59 +1685,7 @@
                         e.preventDefault();
                     });
                     
-                    // Eventos específicos para móviles
-                    if ('ontouchstart' in window) {
-                        // Evento para manejar el teclado virtual en móviles
-                        input.addEventListener('keyup', function(e) {
-                            // En móviles, el teclado virtual puede no disparar 'input' inmediatamente
-                            // así que verificamos el valor después de keyup
-                            setTimeout(() => {
-                                const value = this.value;
-                                if (value.length === 1 && /^\d$/.test(value)) {
-                                    moveToNextInput(this);
-                                }
-                            }, 50);
-                        });
-                        
-                        // Evento para manejar cuando el teclado virtual se abre
-                        input.addEventListener('focus', function(e) {
-                            // En móviles, asegurar que el input esté visible cuando se abre el teclado
-                            setTimeout(() => {
-                                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }, 300);
-                        });
-                        
-                        // Evento para manejar la composición de texto (importante para teclados virtuales)
-                        input.addEventListener('compositionend', function(e) {
-                            setTimeout(() => {
-                                const value = this.value;
-                                if (value.length === 1 && /^\d$/.test(value)) {
-                                    moveToNextInput(this);
-                                }
-                            }, 50);
-                        });
-                        
-                        // Evento para manejar cuando el usuario termina de escribir
-                        input.addEventListener('blur', function(e) {
-                            // Verificar si el valor es válido cuando el input pierde el foco
-                            setTimeout(() => {
-                                const value = this.value;
-                                if (value.length === 1 && /^\d$/.test(value)) {
-                                    moveToNextInput(this);
-                                }
-                            }, 100);
-                        });
-                        
-                        // Evento para manejar cambios en el valor (importante para teclados virtuales)
-                        input.addEventListener('change', function(e) {
-                            setTimeout(() => {
-                                const value = this.value;
-                                if (value.length === 1 && /^\d$/.test(value)) {
-                                    moveToNextInput(this);
-                                }
-                            }, 50);
-                        });
-                    }
+
                     
 
                     
@@ -1888,17 +1824,7 @@
                     return;
                 }
                 
-                // En dispositivos móviles, solo permitir navegación con flechas y backspace
-                // pero no la escritura continua global
-                if (isMobile) {
-                    // Solo manejar navegación con flechas y backspace en móviles
-                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Backspace') {
-                        // Permitir que los inputs individuales manejen estos eventos
-                        return;
-                    }
-                    // Para números en móviles, dejar que los inputs individuales los manejen
-                    return;
-                }
+
                 
                 // Solo procesar números si ningún input de dígito tiene foco (escritura continua)
                 if (/^\d$/.test(e.key)) {
@@ -1968,27 +1894,45 @@
 
         // Sincronizar input continuo con cuadrícula de dígitos
         function syncContinuousInput() {
-            const inputs = document.querySelectorAll('.digit-input');
             const continuousInput = document.getElementById('continuous-input');
             
             if (continuousInput) {
-                const values = Array.from(inputs).map(input => input.value).join('');
-                continuousInput.value = values;
+                // Recolectar todos los valores de todos los números
+                let allValues = '';
+                
+                for (let numberIndex = 0; numberIndex < numberSequence.length; numberIndex++) {
+                    // Buscar los inputs correspondientes a este número
+                    const inputs = document.querySelectorAll(`[data-number-index="${numberIndex}"]`);
+                    if (inputs.length === 3) {
+                        allValues += inputs[0].value + inputs[1].value + inputs[2].value;
+                    }
+                }
+                
+                continuousInput.value = allValues;
             }
         }
 
         // Sincronizar cuadrícula de dígitos con input continuo
         function syncDigitsGrid() {
             const continuousInput = document.getElementById('continuous-input');
-            const inputs = document.querySelectorAll('.digit-input');
             
             if (continuousInput) {
                 const value = continuousInput.value.replace(/\D/g, ''); // Solo números
                 const digits = value.split('');
                 
-                inputs.forEach((input, index) => {
-                    input.value = digits[index] || '';
-                });
+                // Distribuir los dígitos en todos los números
+                let digitIndex = 0;
+                
+                for (let numberIndex = 0; numberIndex < numberSequence.length; numberIndex++) {
+                    // Buscar los inputs correspondientes a este número
+                    const inputs = document.querySelectorAll(`[data-number-index="${numberIndex}"]`);
+                    if (inputs.length === 3) {
+                        inputs[0].value = digits[digitIndex] || '';
+                        inputs[1].value = digits[digitIndex + 1] || '';
+                        inputs[2].value = digits[digitIndex + 2] || '';
+                        digitIndex += 3;
+                    }
+                }
                 
                 // En móviles, mantener el foco en el input continuo para mejor experiencia
                 if ('ontouchstart' in window && continuousInput === document.activeElement) {
@@ -1999,17 +1943,7 @@
             }
         }
         
-        // Función para navegar automáticamente al siguiente input
-        function moveToNextInput(currentInput) {
-            const currentIndex = parseInt(currentInput.dataset.digitIndex);
-            const nextInput = document.querySelector(`[data-digit-index="${currentIndex + 1}"]`);
-            if (nextInput) {
-                nextInput.focus();
-                nextInput.select();
-                return true;
-            }
-            return false;
-        }
+
 
         // Timer para fase de recall
         function startRecallTimer() {
