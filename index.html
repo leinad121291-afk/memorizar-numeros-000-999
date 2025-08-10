@@ -664,6 +664,36 @@
                 max-width: 99%;
             }
             
+            /* Adaptar comparación visual para móviles */
+            .visual-comparison {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .comparison-row {
+                flex-direction: column;
+                gap: 8px;
+                margin: 8px 0;
+            }
+            
+            .comparison-number {
+                font-size: 1.2rem;
+                gap: 1px;
+            }
+            
+            .comparison-digit {
+                width: 25px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .comparison-label {
+                font-size: 0.9rem;
+                margin: 0 10px;
+                min-width: 80px;
+                text-align: center;
+            }
+            
             /* Mejorar experiencia en móviles */
             .number-display {
                 font-size: 2.2rem !important;
@@ -809,6 +839,36 @@
                 padding: 8px !important;
                 min-height: 40px !important;
             }
+            
+            /* Adaptar comparación visual para móviles pequeños */
+            .visual-comparison {
+                padding: 10px;
+                margin: 10px 0;
+            }
+            
+            .comparison-row {
+                flex-direction: column;
+                gap: 5px;
+                margin: 5px 0;
+            }
+            
+            .comparison-number {
+                font-size: 1rem;
+                gap: 1px;
+            }
+            
+            .comparison-digit {
+                width: 22px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+            
+            .comparison-label {
+                font-size: 0.8rem;
+                margin: 0 5px;
+                min-width: 70px;
+                text-align: center;
+            }
         }
         
         @media (max-width: 360px) {
@@ -853,6 +913,36 @@
                 padding: 8px 12px !important;
                 font-size: 0.9rem !important;
                 min-height: 36px !important;
+            }
+            
+            /* Adaptar comparación visual para móviles muy pequeños */
+            .visual-comparison {
+                padding: 8px;
+                margin: 8px 0;
+            }
+            
+            .comparison-row {
+                flex-direction: column;
+                gap: 3px;
+                margin: 3px 0;
+            }
+            
+            .comparison-number {
+                font-size: 0.9rem;
+                gap: 1px;
+            }
+            
+            .comparison-digit {
+                width: 20px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            
+            .comparison-label {
+                font-size: 0.7rem;
+                margin: 0 3px;
+                min-width: 60px;
+                text-align: center;
             }
         }
     </style>
@@ -1806,20 +1896,38 @@
                             e.target.value = value.slice(-1);
                         }
                         
-                        // Verificar si es un número válido
+                        // Sincronizar con el input continuo
+                        syncContinuousInput();
+                    });
+                    
+                    // Evento específico para navegación automática en móviles
+                    input.addEventListener('keyup', function(e) {
+                        const value = this.value;
                         if (value.length === 1 && /^\d$/.test(value)) {
                             // Mover al siguiente input automáticamente
                             const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
                             if (nextInput) {
                                 setTimeout(() => {
                                     nextInput.focus();
-                                    nextInput.select(); // Seleccionar contenido para sobreescribir
-                                }, 50); // Pequeño delay para asegurar que funcione en móviles
+                                    nextInput.select();
+                                }, 100);
                             }
                         }
-                        
-                        // Sincronizar con el input continuo
-                        syncContinuousInput();
+                    });
+                    
+                    // Evento adicional para móviles (cuando se completa la entrada)
+                    input.addEventListener('blur', function(e) {
+                        const value = this.value;
+                        if (value.length === 1 && /^\d$/.test(value)) {
+                            // Mover al siguiente input automáticamente
+                            const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
+                            if (nextInput) {
+                                setTimeout(() => {
+                                    nextInput.focus();
+                                    nextInput.select();
+                                }, 50);
+                            }
+                        }
                     });
                     
                     // Evento para permitir sobreescribir al hacer clic
