@@ -378,6 +378,30 @@
                 min-height: 44px;
             }
             
+            /* En móviles, hacer el input continuo más prominente */
+            .mobile-device .continuous-input {
+                font-size: 20px !important;
+                padding: 25px 20px !important;
+                border: 3px solid #667eea !important;
+                background-color: #f8f9fa !important;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+                margin: 20px 0 !important;
+            }
+            
+            /* Ocultar la cuadrícula de dígitos en móviles para enfatizar el input continuo */
+            .mobile-device .digits-grid {
+                display: none !important;
+            }
+            
+            /* Mostrar mensaje específico para móviles */
+            .mobile-device .input-hint {
+                font-size: 1rem !important;
+                font-weight: bold !important;
+                color: #1976d2 !important;
+                text-align: center !important;
+                margin: 15px 0 !important;
+            }
+            
             .continuous-input-container {
                 margin: 30px 0;
                 padding: 25px;
@@ -640,6 +664,32 @@
                 max-width: 99%;
             }
             
+            /* Mejorar experiencia en móviles */
+            .number-display {
+                font-size: 2.5rem !important;
+                padding: 15px !important;
+                margin: 15px 0 !important;
+            }
+            
+            /* Prevenir zoom en inputs */
+            input[type="text"], input[type="number"] {
+                font-size: 16px !important;
+            }
+            
+            /* Mejorar botones en móviles */
+            .button {
+                padding: 12px 20px !important;
+                font-size: 1.1rem !important;
+                min-height: 44px !important;
+            }
+            
+            /* Mejorar selectores en móviles */
+            .timer-select, .small-input {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 44px !important;
+            }
+            
             .timer-config, .mode-selector {
                 flex-direction: column;
                 align-items: center;
@@ -802,7 +852,7 @@
                 <p id="summary-mode">Modo: Tiempo de memorización</p>
             </div>
             
-            <button class="button" onclick="startGame()">Comenzar Juego</button>
+            <button class="button" id="start-game-btn" onclick="startGame()">Comenzar Juego</button>
         </div>
 
         <!-- Fase de Memorización -->
@@ -830,11 +880,11 @@
             
             <!-- Input continuo para escritura rápida -->
             <div class="continuous-input-container">
-                <label for="continuous-input">Escritura continua (recomendado):</label>
+                <label for="continuous-input" id="continuous-input-label">Escritura continua (recomendado):</label>
                 <input type="text" id="continuous-input" class="continuous-input" placeholder="Escribe todos los números seguidos aquí..." maxlength="999">
-                <p class="input-hint">Simplemente escribe los números y se distribuirán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
+                <p class="input-hint" id="desktop-hint">Simplemente escribe los números y se distribuirán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
                 <p class="input-hint" style="color: #007bff; font-weight: bold;">💡 Tip: Puedes escribir directamente sin hacer clic en ningún lugar. Solo presiona las teclas numéricas y se llenarán automáticamente. También puedes hacer clic en cualquier dígito para editarlo directamente.</p>
-                <p class="input-hint" id="mobile-hint" style="color: #28a745; font-weight: bold; display: none;">📱 En móviles: Toca el campo de arriba y escribe los números usando el teclado virtual. Los números se distribuirán automáticamente.</p>
+                <p class="input-hint" id="mobile-hint" style="color: #28a745; font-weight: bold; display: none;">📱 En móviles: Toca el campo de arriba y escribe los números usando el teclado virtual. Los números se distribuirán automáticamente. ¡No necesitas tocar cada cuadro individualmente!</p>
             </div>
             
             <div id="digits-input-container" class="digits-grid"></div>
@@ -970,6 +1020,14 @@
                     numberSequence.push(number.toString().padStart(3, '0'));
                 }
                 return;
+            }
+            
+            // Verificar que hay suficientes números disponibles en los rangos seleccionados
+            generateAvailableNumbers();
+            
+            if (availableNumbers.length < selectedDigits) {
+                console.warn(`Solo hay ${availableNumbers.length} números disponibles en los rangos seleccionados, pero se solicitan ${selectedDigits}. Se usarán todos los disponibles.`);
+                selectedDigits = availableNumbers.length;
             }
             
             // Generar números solo de los rangos seleccionados
@@ -1714,6 +1772,11 @@
                 if ('ontouchstart' in window) {
                     setTimeout(() => {
                         continuousInput.focus();
+                        // En móviles, hacer el input continuo más prominente
+                        continuousInput.style.fontSize = '18px';
+                        continuousInput.style.padding = '15px';
+                        continuousInput.style.border = '3px solid #667eea';
+                        continuousInput.style.backgroundColor = '#f8f9fa';
                     }, 500);
                 }
             }
@@ -1756,6 +1819,11 @@
                     if (e.key === 'ArrowRight') {
                         e.preventDefault();
                         nextNumber();
+                        return;
+                    }
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        finishMemorization();
                         return;
                     }
                 }
@@ -1823,8 +1891,6 @@
                     
                     return;
                 }
-                
-
                 
                 // Solo procesar números si ningún input de dígito tiene foco (escritura continua)
                 if (/^\d$/.test(e.key)) {
@@ -1908,7 +1974,10 @@
                     }
                 }
                 
-                continuousInput.value = allValues;
+                // Solo actualizar si el valor es diferente para evitar loops infinitos
+                if (continuousInput.value !== allValues) {
+                    continuousInput.value = allValues;
+                }
             }
         }
 
@@ -1927,9 +1996,22 @@
                     // Buscar los inputs correspondientes a este número
                     const inputs = document.querySelectorAll(`[data-number-index="${numberIndex}"]`);
                     if (inputs.length === 3) {
-                        inputs[0].value = digits[digitIndex] || '';
-                        inputs[1].value = digits[digitIndex + 1] || '';
-                        inputs[2].value = digits[digitIndex + 2] || '';
+                        const newValues = [
+                            digits[digitIndex] || '',
+                            digits[digitIndex + 1] || '',
+                            digits[digitIndex + 2] || ''
+                        ];
+                        
+                        // Solo actualizar si los valores son diferentes
+                        if (inputs[0].value !== newValues[0] || 
+                            inputs[1].value !== newValues[1] || 
+                            inputs[2].value !== newValues[2]) {
+                            
+                            inputs[0].value = newValues[0];
+                            inputs[1].value = newValues[1];
+                            inputs[2].value = newValues[2];
+                        }
+                        
                         digitIndex += 3;
                     }
                 }
@@ -1939,6 +2021,11 @@
                     // Asegurar que el cursor esté al final del texto
                     const length = continuousInput.value.length;
                     continuousInput.setSelectionRange(length, length);
+                }
+                
+                // En móviles, actualizar el índice actual para la escritura continua
+                if ('ontouchstart' in window) {
+                    currentDigitIndex = Math.min(value.length, totalDigits);
                 }
             }
         }
@@ -2546,10 +2633,18 @@
              }
          }
          
-         // Event listener para detectar cambios en pantalla completa
-         document.addEventListener('fullscreenchange', updateFullscreenButton);
-         document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-         document.addEventListener('msfullscreenchange', updateFullscreenButton);
+                 // Event listener para detectar cambios en pantalla completa
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('msfullscreenchange', updateFullscreenButton);
+        
+        // Event listener para tecla F11
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
          
          // Función para actualizar el botón según el estado de pantalla completa
          function updateFullscreenButton() {
@@ -2590,10 +2685,20 @@
                  startButton.style.opacity = '1';
                  startButton.style.cursor = 'pointer';
                  startButton.disabled = false;
+                 startButton.title = 'Comenzar Juego';
              } else {
                  startButton.style.opacity = '0.6';
                  startButton.style.cursor = 'not-allowed';
                  startButton.disabled = true;
+                 
+                 // Mostrar mensaje específico sobre qué falta
+                 let missingFields = [];
+                 if (!isDigitsValid) missingFields.push('número de dígitos');
+                 if (!isRoundsValid) missingFields.push('número de rondas');
+                 if (!isTimeValid) missingFields.push('tiempo de memorización/autoavance');
+                 if (!isRecallTimeValid) missingFields.push('tiempo de recall');
+                 
+                 startButton.title = `Faltan: ${missingFields.join(', ')}`;
              }
          }
 
@@ -2673,9 +2778,33 @@
             // Detectar si es un dispositivo móvil y mostrar mensaje específico
             if ('ontouchstart' in window) {
                 const mobileHint = document.getElementById('mobile-hint');
+                const desktopHint = document.getElementById('desktop-hint');
+                const continuousInputLabel = document.getElementById('continuous-input-label');
+                
                 if (mobileHint) {
                     mobileHint.style.display = 'block';
                 }
+                if (desktopHint) {
+                    desktopHint.style.display = 'none';
+                }
+                if (continuousInputLabel) {
+                    continuousInputLabel.textContent = '📱 Escritura continua (MÓVIL - RECOMENDADO):';
+                }
+                
+                // Mejorar experiencia en móviles
+                document.body.classList.add('mobile-device');
+                
+                // Prevenir zoom en inputs
+                const inputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+                inputs.forEach(input => {
+                    input.style.fontSize = '16px';
+                    input.addEventListener('focus', function() {
+                        // En móviles, hacer scroll suave al input
+                        setTimeout(() => {
+                            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
+                    });
+                });
             }
             
             const continuousInput = document.getElementById('continuous-input');
@@ -2709,6 +2838,17 @@
                         return;
                     }
                 });
+                
+                // Agregar evento para capturar números en móviles sin foco
+                if ('ontouchstart' in window) {
+                    // En móviles, hacer que el input continuo sea el principal
+                    continuousInput.addEventListener('input', function() {
+                        // Actualizar el índice actual basado en la longitud del input
+                        const value = this.value.replace(/\D/g, '');
+                        currentDigitIndex = Math.min(value.length, totalDigits);
+                        syncDigitsGrid();
+                    });
+                }
             }
             
             // Limpiar todos los campos al cargar la página
