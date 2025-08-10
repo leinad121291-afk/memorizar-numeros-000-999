@@ -574,6 +574,9 @@
              padding: 20px;
              margin: 20px 0;
              border: 2px solid #e9ecef;
+             max-width: 100%;
+             overflow-x: auto;
+             box-sizing: border-box;
          }
 
          .comparison-row {
@@ -583,6 +586,8 @@
              gap: 10px;
              margin: 10px 0;
              flex-wrap: wrap;
+             max-width: 100%;
+             box-sizing: border-box;
          }
 
          .comparison-number {
@@ -591,6 +596,9 @@
              font-family: 'Courier New', monospace;
              font-size: 1.5rem;
              font-weight: bold;
+             max-width: 100%;
+             flex-wrap: wrap;
+             justify-content: center;
          }
 
          .comparison-digit {
@@ -668,17 +676,25 @@
             .visual-comparison {
                 padding: 15px;
                 margin: 15px 0;
+                max-width: 100% !important;
+                overflow-x: auto !important;
+                box-sizing: border-box !important;
             }
             
             .comparison-row {
                 flex-direction: column;
                 gap: 8px;
                 margin: 8px 0;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
             }
             
             .comparison-number {
                 font-size: 1.2rem;
                 gap: 1px;
+                max-width: 100% !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
             }
             
             .comparison-digit {
@@ -1896,13 +1912,7 @@
                             e.target.value = value.slice(-1);
                         }
                         
-                        // Sincronizar con el input continuo
-                        syncContinuousInput();
-                    });
-                    
-                    // Evento específico para navegación automática en móviles
-                    input.addEventListener('keyup', function(e) {
-                        const value = this.value;
+                        // Verificar si es un número válido y navegar automáticamente
                         if (value.length === 1 && /^\d$/.test(value)) {
                             // Mover al siguiente input automáticamente
                             const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
@@ -1910,9 +1920,12 @@
                                 setTimeout(() => {
                                     nextInput.focus();
                                     nextInput.select();
-                                }, 100);
+                                }, 150); // Delay más largo para móviles
                             }
                         }
+                        
+                        // Sincronizar con el input continuo
+                        syncContinuousInput();
                     });
                     
                     // Evento adicional para móviles (cuando se completa la entrada)
@@ -1925,7 +1938,7 @@
                                 setTimeout(() => {
                                     nextInput.focus();
                                     nextInput.select();
-                                }, 50);
+                                }, 100);
                             }
                         }
                     });
