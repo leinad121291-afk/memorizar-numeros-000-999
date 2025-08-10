@@ -666,9 +666,9 @@
             
             /* Mejorar experiencia en móviles */
             .number-display {
-                font-size: 2.5rem !important;
-                padding: 15px !important;
-                margin: 15px 0 !important;
+                font-size: 2.2rem !important;
+                padding: 12px !important;
+                margin: 12px 0 !important;
             }
             
             /* Prevenir zoom en inputs */
@@ -696,8 +696,8 @@
             }
             
             .number-display {
-                font-size: 2rem;
-                padding: 20px;
+                font-size: 1.8rem;
+                padding: 15px;
             }
 
             .digits-grid {
@@ -705,15 +705,27 @@
                 max-width: 100%;
                 padding: 15px;
             }
+            
+            #digits-input-container {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 5px !important;
+                padding: 15px !important;
+                max-width: 100% !important;
+            }
 
             .digit-input {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
-                border-width: 1px;
-                border-radius: 6px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                border-width: 2px;
+                border-radius: 8px;
                 /* Asegurar que sea fácil de tocar */
-                min-height: 35px;
+                min-height: 40px;
+                display: block !important;
+                visibility: visible !important;
             }
             
             .number-pair {
@@ -744,6 +756,103 @@
             
             .input-hint {
                 font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 5px;
+                max-width: 100%;
+            }
+            
+            .number-display {
+                font-size: 1.6rem !important;
+                padding: 10px !important;
+                margin: 10px 0 !important;
+            }
+            
+            .digits-grid {
+                gap: 3px;
+                padding: 10px;
+            }
+            
+            #digits-input-container {
+                gap: 3px !important;
+                padding: 10px !important;
+            }
+
+            .digit-input {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+                min-height: 35px;
+                display: block !important;
+                visibility: visible !important;
+                border-width: 2px;
+                border-radius: 6px;
+            }
+            
+            .digits-input {
+                width: 45px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            
+            .button {
+                padding: 10px 16px !important;
+                font-size: 1rem !important;
+                min-height: 40px !important;
+            }
+            
+            .timer-select, .small-input {
+                font-size: 14px !important;
+                padding: 8px !important;
+                min-height: 40px !important;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .game-container {
+                padding: 3px;
+            }
+            
+            .number-display {
+                font-size: 1.4rem !important;
+                padding: 8px !important;
+                margin: 8px 0 !important;
+            }
+            
+            .digits-grid {
+                gap: 2px;
+                padding: 8px;
+            }
+            
+            #digits-input-container {
+                gap: 2px !important;
+                padding: 8px !important;
+            }
+
+            .digit-input {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+                min-height: 32px;
+                display: block !important;
+                visibility: visible !important;
+                border-width: 2px;
+                border-radius: 6px;
+            }
+            
+            .digits-input {
+                width: 40px;
+                height: 25px;
+                font-size: 0.7rem;
+            }
+            
+            .button {
+                padding: 8px 12px !important;
+                font-size: 0.9rem !important;
+                min-height: 36px !important;
             }
         }
     </style>
@@ -1687,26 +1796,30 @@
                     input.placeholder = '_';
                     input.value = ''; // Asegurar que esté vacío
                     
-                    // Evento para sincronizar con el input continuo
+                    // Evento unificado para manejar input y navegación automática
                     input.addEventListener('input', function(e) {
-                        // Limpiar el valor anterior y establecer solo el nuevo dígito
                         const value = e.target.value;
+                        
+                        // Limpiar el valor anterior y establecer solo el nuevo dígito
                         if (value.length > 1) {
                             // Si hay más de un carácter, mantener solo el último
                             e.target.value = value.slice(-1);
                         }
-                        syncContinuousInput();
-                    });
-                    
-                    // Evento para mover al siguiente input automáticamente
-                    input.addEventListener('input', function(e) {
-                        const value = e.target.value;
+                        
+                        // Verificar si es un número válido
                         if (value.length === 1 && /^\d$/.test(value)) {
+                            // Mover al siguiente input automáticamente
                             const nextInput = container.querySelector(`[data-digit-index="${digitIndex + 1}"]`);
                             if (nextInput) {
-                                nextInput.focus();
+                                setTimeout(() => {
+                                    nextInput.focus();
+                                    nextInput.select(); // Seleccionar contenido para sobreescribir
+                                }, 50); // Pequeño delay para asegurar que funcione en móviles
                             }
                         }
+                        
+                        // Sincronizar con el input continuo
+                        syncContinuousInput();
                     });
                     
                     // Evento para permitir sobreescribir al hacer clic
@@ -1718,7 +1831,9 @@
                     
                     // Evento para permitir sobreescribir al hacer foco
                     input.addEventListener('focus', function(e) {
-                        this.select(); // Seleccionar todo el contenido para sobreescribir
+                        setTimeout(() => {
+                            this.select(); // Seleccionar todo el contenido para sobreescribir
+                        }, 10); // Pequeño delay para móviles
                     });
                     
                     // Evento para permitir sobreescribir al hacer doble clic
