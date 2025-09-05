@@ -13,7 +13,7 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgba(2, 102, 255, 0.70) 0%, rgba(0, 82, 204, 0.70) 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -82,7 +82,7 @@
 
         .input-field:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0266ff;
         }
 
         .small-input {
@@ -97,11 +97,11 @@
 
         .small-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0266ff;
         }
 
         .button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgba(2, 102, 255, 0.70) 0%, rgba(0, 82, 204, 0.70) 100%);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -147,7 +147,7 @@
 
         .digits-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0266ff;
             background: white;
             transform: scale(1.05);
         }
@@ -230,7 +230,7 @@
         
         .timer-select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0266ff;
             background: white;
         }
 
@@ -322,9 +322,9 @@
         }
 
         .range-button.selected {
-            background: #667eea;
+            background: rgba(2, 102, 255, 0.70);
             color: white;
-            border-color: #667eea;
+            border-color: #0266ff;
         }
 
         .range-button:hover {
@@ -332,7 +332,7 @@
         }
 
         .range-button.selected:hover {
-            background: #667eea;
+            background: rgba(2, 102, 255, 0.70);
         }
 
         /* Estilos para la dinámica de recall */
@@ -364,7 +364,7 @@
 
         .continuous-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0266ff;
         }
         
         /* Mejorar experiencia en móviles */
@@ -382,7 +382,7 @@
             .mobile-device .continuous-input {
                 font-size: 20px !important;
                 padding: 25px 20px !important;
-                border: 3px solid #667eea !important;
+                border: 3px solid #0266ff !important;
                 background-color: #f8f9fa !important;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
                 margin: 20px 0 !important;
@@ -451,7 +451,7 @@
 
         .digit-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0266ff;
             transform: scale(1.05);
         }
 
@@ -479,7 +479,7 @@
          
          .progress-fill {
              height: 100%;
-             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+             background: linear-gradient(135deg, rgba(2, 102, 255, 0.70) 0%, rgba(0, 82, 204, 0.70) 100%);
              transition: width 0.3s ease;
              width: 0%;
          }
@@ -659,11 +659,11 @@
         }
         
         .fullscreen-button.fullscreen {
-            background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%) !important;
+            background: linear-gradient(135deg, rgba(2, 102, 255, 0.70) 0%, rgba(0, 82, 204, 0.70) 100%) !important;
         }
         
         .fullscreen-button.fullscreen:hover {
-            background: linear-gradient(135deg, #7d3c98 0%, #8e44ad 100%) !important;
+            background: linear-gradient(135deg, rgba(0, 82, 204, 0.70) 0%, rgba(0, 61, 153, 0.70) 100%) !important;
         }
 
         @media (max-width: 768px) {
@@ -961,6 +961,53 @@
                 text-align: center;
             }
         }
+
+        /* Estilos para la fase de preparación */
+        .prep-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .prep-circle {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0) 60%), #000000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25), inset 0 0 0 10px rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 6px solid rgba(255,255,255,0.18);
+            animation: prepPulse 1.6s ease-in-out infinite;
+        }
+        .prep-circle::after {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
+            filter: blur(8px);
+            opacity: 0.5;
+        }
+        .prep-count {
+            font-size: 6rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 4px 16px rgba(0,0,0,0.35);
+            line-height: 1;
+        }
+        .prep-subtitle {
+            color: #000000;
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        @keyframes prepPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 20px 40px rgba(0,0,0,0.25), inset 0 0 0 10px rgba(255,255,255,0.12); }
+            50% { transform: scale(1.03); box-shadow: 0 24px 48px rgba(0,0,0,0.3), inset 0 0 0 12px rgba(255,255,255,0.15); }
+        }
     </style>
 </head>
 <body>
@@ -1068,6 +1115,17 @@
             </div>
             
             <button class="button" id="start-game-btn" onclick="startGame()">Comenzar Juego</button>
+        </div>
+
+        <!-- Fase de Preparación -->
+        <div id="preparation-phase" class="hidden">
+            <h2 class="phase-title">Preparación</h2>
+            <div class="prep-wrapper">
+                <div class="prep-circle">
+                    <div class="prep-count" id="prep-countdown">5</div>
+                </div>
+                <div class="prep-subtitle"><strong>Prepárate, la memorización comienza en breve...</strong></div>
+            </div>
         </div>
 
         <!-- Fase de Memorización -->
@@ -1646,34 +1704,58 @@
                 timer = memorizationTime;
             }
             
+            // Mostrar fase de preparación antes de iniciar memorización
             document.getElementById('setup-phase').classList.add('hidden');
-            document.getElementById('memorization-phase').classList.remove('hidden');
-            
-            updateDisplay();
-            
-            // Actualizar timer inicial
-            document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
-            
-            // Actualizar mensaje de memorización
-            const memorizationInfo = document.getElementById('memorization-info');
-            if (currentMode === 'auto-advance') {
-                const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
-                if (numbersPerPage === 1) {
-                    memorizationInfo.textContent = `Ronda ${currentRound} - Número 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
-                } else {
-                    memorizationInfo.textContent = `Ronda ${currentRound} - Página 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
-                }
+            const prepEl = document.getElementById('preparation-phase');
+            const prepCountdownEl = document.getElementById('prep-countdown');
+            if (prepEl && prepCountdownEl) {
+                prepEl.classList.remove('hidden');
+                let prepTime = 5;
+                prepCountdownEl.textContent = `${prepTime}`;
+                if (window.prepInterval) clearInterval(window.prepInterval);
+                window.prepInterval = setInterval(() => {
+                    prepTime--;
+                    prepCountdownEl.textContent = `${prepTime}`;
+                    if (prepTime <= 0) {
+                        clearInterval(window.prepInterval);
+                        prepEl.classList.add('hidden');
+
+                        document.getElementById('memorization-phase').classList.remove('hidden');
+                        updateDisplay();
+                        
+                        // Actualizar timer inicial
+                        document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                        
+                        // Actualizar mensaje de memorización
+                        const memorizationInfo = document.getElementById('memorization-info');
+                        if (currentMode === 'auto-advance') {
+                            const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
+                            if (numbersPerPage === 1) {
+                                memorizationInfo.textContent = `Ronda ${currentRound} - Número 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                            } else {
+                                memorizationInfo.textContent = `Ronda ${currentRound} - Página 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                            }
+                        } else {
+                            memorizationInfo.textContent = `Ronda ${currentRound} - Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+                        }
+                        
+                        // Configurar captura global de teclas para memorización
+                        window.cleanupKeyCapture = setupGlobalKeyCapture();
+                        
+                        // Registrar tiempo de inicio de memorización
+                        memorizationStartTime = Date.now();
+                        
+                        startTimer();
+                    }
+                }, 1000);
             } else {
-                memorizationInfo.textContent = `Ronda ${currentRound} - Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+                // Fallback directo
+                document.getElementById('memorization-phase').classList.remove('hidden');
+                updateDisplay();
+                document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                memorizationStartTime = Date.now();
+                startTimer();
             }
-            
-            // Configurar captura global de teclas para memorización
-            window.cleanupKeyCapture = setupGlobalKeyCapture();
-            
-            // Registrar tiempo de inicio de memorización
-            memorizationStartTime = Date.now();
-            
-            startTimer();
         }
 
         // Actualizar pantalla de memorización
@@ -2011,7 +2093,7 @@
                         // En móviles, hacer el input continuo más prominente
                         continuousInput.style.fontSize = '18px';
                         continuousInput.style.padding = '15px';
-                        continuousInput.style.border = '3px solid #667eea';
+                        continuousInput.style.border = '3px solid #0266ff';
                         continuousInput.style.backgroundColor = '#f8f9fa';
                     }, 500);
                 }
@@ -2556,34 +2638,57 @@
                 timer = memorizationTime;
             }
             
-            document.getElementById('result-phase').classList.add('hidden');
-            document.getElementById('memorization-phase').classList.remove('hidden');
-            
-            updateDisplay();
-            
-            // Actualizar timer inicial
-            document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
-            
-            // Actualizar mensaje de memorización
-            const memorizationInfo = document.getElementById('memorization-info');
-            if (currentMode === 'auto-advance') {
-                const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
-                if (numbersPerPage === 1) {
-                    memorizationInfo.textContent = `Ronda ${currentRound} - Número 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
-                } else {
-                    memorizationInfo.textContent = `Ronda ${currentRound} - Página 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
-                }
+            // Mostrar fase de preparación antes de cada nueva ronda
+            const prepEl = document.getElementById('preparation-phase');
+            const prepCountdownEl = document.getElementById('prep-countdown');
+            if (prepEl && prepCountdownEl) {
+                document.getElementById('result-phase').classList.add('hidden');
+                prepEl.classList.remove('hidden');
+                let prepTime = 5;
+                prepCountdownEl.textContent = `${prepTime}`;
+                if (window.prepInterval) clearInterval(window.prepInterval);
+                window.prepInterval = setInterval(() => {
+                    prepTime--;
+                    prepCountdownEl.textContent = `${prepTime}`;
+                    if (prepTime <= 0) {
+                        clearInterval(window.prepInterval);
+                        prepEl.classList.add('hidden');
+                        document.getElementById('memorization-phase').classList.remove('hidden');
+                        updateDisplay();
+                        
+                        // Actualizar timer inicial
+                        document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                        
+                        // Actualizar mensaje de memorización
+                        const memorizationInfo = document.getElementById('memorization-info');
+                        if (currentMode === 'auto-advance') {
+                            const totalPages = Math.ceil(numberSequence.length / numbersPerPage);
+                            if (numbersPerPage === 1) {
+                                memorizationInfo.textContent = `Ronda ${currentRound} - Número 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                            } else {
+                                memorizationInfo.textContent = `Ronda ${currentRound} - Página 1 de ${totalPages}. Avanzará automáticamente en ${autoAdvanceTime.toFixed(1)} segundos.`;
+                            }
+                        } else {
+                            memorizationInfo.textContent = `Ronda ${currentRound} - Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+                        }
+                        
+                        // Configurar captura global de teclas para memorización
+                        window.cleanupKeyCapture = setupGlobalKeyCapture();
+                        
+                        // Registrar tiempo de inicio de memorización
+                        memorizationStartTime = Date.now();
+                        
+                        startTimer();
+                    }
+                }, 1000);
             } else {
-                memorizationInfo.textContent = `Ronda ${currentRound} - Memoriza estos números. Tienes ${memorizationTime.toFixed(1)} segundos.`;
+                document.getElementById('result-phase').classList.add('hidden');
+                document.getElementById('memorization-phase').classList.remove('hidden');
+                updateDisplay();
+                document.getElementById('timer').textContent = `Tiempo restante: ${timer.toFixed(1)} segundos`;
+                memorizationStartTime = Date.now();
+                startTimer();
             }
-            
-            // Configurar captura global de teclas para memorización
-            window.cleanupKeyCapture = setupGlobalKeyCapture();
-            
-            // Registrar tiempo de inicio de memorización
-            memorizationStartTime = Date.now();
-            
-            startTimer();
         }
          
          // Función para mostrar resultados finales
