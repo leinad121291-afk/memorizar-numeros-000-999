@@ -1040,20 +1040,9 @@
                 <p id="selected-info">Memorizarás 5 números de 3 dígitos (1 número por página)</p>
             </div>
 
-            <!-- Configuración de Rondas -->
-            <div class="section">
-                <h3 class="section-title">3. Configuración de Rondas</h3>
-                <p>Elige cuántas rondas quieres jugar:</p>
-                <div class="digits-input-container">
-                    <input type="number" id="rounds-input" class="digits-input" min="1" max="100" value="" placeholder="10">
-                    <span style="font-size: 1.1rem; color: #333;">rondas</span>
-                </div>
-                <p id="rounds-info">Jugarás 10 rondas en total</p>
-            </div>
-
             <!-- Números por Página -->
             <div class="section">
-                <h3 class="section-title">4. Números por Página</h3>
+                <h3 class="section-title">3. Números por Página</h3>
                 <p>¿Cuántos números quieres que aparezcan por página durante la memorización?</p>
                 <div class="numbers-per-page-selector">
                     <div class="page-option">
@@ -1067,23 +1056,10 @@
                 </div>
                 <p id="page-info">Mostrarás 1 número por página durante la memorización</p>
             </div>
-
-            <!-- Configuración de Temporizadores -->
-            <div class="section">
-                <h3 class="section-title">5. Configuración de Temporizadores</h3>
-                
-                <div class="timer-config">
-                    <div class="timer-option">
-                        <label for="recall-timer">Tiempo para recall (segundos):</label>
-                        <input type="number" id="recall-timer" class="timer-select" min="1" max="3600" step="0.1" value="" placeholder="30">
-                        <div id="recall-time-conversion" style="font-size: 0.9rem; color: #666; margin-top: 5px;"></div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Configuración de Autoavance -->
             <div class="section">
-                <h3 class="section-title">6. Configuración de Tiempo de Memorización</h3>
+                <h3 class="section-title">4. Tiempo de Memorización</h3>
                 
                 <div class="mode-selector">
                     <div class="mode-option">
@@ -1105,13 +1081,84 @@
                 </p>
             </div>
 
+            <!-- Recall -->
+            <div class="section">
+                <h3 class="section-title">5. Recall</h3>
+                
+                <div class="timer-config">
+                    <div class="timer-option">
+                        <label for="recall-timer">Tiempo para recall (segundos):</label>
+                        <input type="number" id="recall-timer" class="timer-select" min="1" max="3600" step="0.1" value="" placeholder="30">
+                        <div id="recall-time-conversion" style="font-size: 0.9rem; color: #666; margin-top: 5px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rondas -->
+            <div class="section">
+                <h3 class="section-title">6. Rondas</h3>
+                <p>Elige cuántas rondas quieres jugar:</p>
+                <div class="digits-input-container">
+                    <input type="number" id="rounds-input" class="digits-input" min="1" max="100" value="" placeholder="10">
+                    <span style="font-size: 1.1rem; color: #333;">rondas</span>
+                </div>
+                <p id="rounds-info">Jugarás 10 rondas en total</p>
+            </div>
+
             <!-- Resumen de Configuración -->
-            <div class="summary" id="config-summary">
-                <h3>Resumen de Configuración</h3>
-                <p id="summary-digits">Dígitos: 3</p>
-                <p id="summary-rounds">Rondas: 10 rondas</p>
-                <p id="summary-timers">Temporizadores: Memorización 15s, Recall 30s</p>
-                <p id="summary-mode">Modo: Tiempo de memorización</p>
+            <div id="config-summary" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 25px; margin: 25px 0; border: 2px solid #dee2e6; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 20px 0; color: #495057; font-size: 1.4rem; text-align: center; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">
+                    📋 Resumen de Configuración
+                </h3>
+                
+                <!-- Información Principal -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <!-- Rangos -->
+                    <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #fd7e14; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 8px 0; color: #fd7e14; font-size: 1rem;">🎯 Rangos</h4>
+                        <p id="summary-ranges" style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #333;">Cargando...</p>
+                    </div>
+                    
+                    <!-- Números -->
+                    <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #007bff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 8px 0; color: #007bff; font-size: 1rem;">🔢 Números</h4>
+                        <p id="summary-digits" style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #333;">Cargando...</p>
+                    </div>
+                    
+                    <!-- Rondas -->
+                    <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #28a745; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 8px 0; color: #28a745; font-size: 1rem;">🔄 Rondas</h4>
+                        <p id="summary-rounds" style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #333;">Cargando...</p>
+                    </div>
+                </div>
+                
+                <!-- Visualización -->
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #6f42c1; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 8px 0; color: #6f42c1; font-size: 1rem;">👁️ Visualización</h4>
+                    <p id="summary-display" style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #333;">Cargando...</p>
+                </div>
+                
+                <!-- Tiempo de Memorización -->
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #ffc107; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 8px 0; color: #ffc107; font-size: 1rem;">⏱️ Tiempo de Memorización</h4>
+                    <p id="summary-mode" style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #333;">Cargando...</p>
+                </div>
+                
+                <!-- Recall -->
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #17a2b8; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 8px 0; color: #17a2b8; font-size: 1rem;">📝 Recall</h4>
+                    <p id="summary-timers" style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #333;">Cargando...</p>
+                </div>
+                
+                <!-- Tiempos Estimados -->
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid #dc3545; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h4 style="margin: 0 0 8px 0; color: #dc3545; font-size: 1rem;">⏰ Tiempos Estimados</h4>
+                    <div id="summary-times" style="color: #333;">
+                        <p style="margin: 5px 0; font-size: 1rem;"><strong>Tiempo por ronda:</strong> <span id="time-per-round">Cargando...</span></p>
+                        <p style="margin: 5px 0; font-size: 1rem;"><strong>Tiempo total:</strong> <span id="time-total">Cargando...</span></p>
+                        <p style="margin: 5px 0; font-size: 0.9rem; color: #666;"><span id="time-breakdown">Cargando...</span></p>
+                    </div>
+                </div>
             </div>
             
             <button class="button" id="start-game-btn" onclick="startGame()">Comenzar Juego</button>
@@ -1560,18 +1607,28 @@
         // Actualizar resumen
         function updateSummary() {
             const pages = Math.ceil(selectedDigits / numbersPerPage);
-            const rangeInfo = selectedRanges.length === 0 ? 'Todos los números (000-999)' : `Rangos: ${selectedRanges.join(', ')}`;
             
-            if (selectedDigits > 0) {
-                document.getElementById('summary-digits').textContent = `Números: ${selectedDigits} de 3 dígitos (${pages} páginas) - ${rangeInfo}`;
+            // Actualizar apartado de Rangos
+            if (selectedRanges.length === 0) {
+                document.getElementById('summary-ranges').textContent = 'Todos (000-999)';
             } else {
-                document.getElementById('summary-digits').textContent = `Números: (escribe un número) - ${rangeInfo}`;
+                document.getElementById('summary-ranges').textContent = selectedRanges.join(', ');
             }
+            
+            // Actualizar apartado de Números (solo cantidad)
+            if (selectedDigits > 0) {
+                document.getElementById('summary-digits').textContent = `${selectedDigits} números (${pages} páginas)`;
+            } else {
+                document.getElementById('summary-digits').textContent = '(escribe un número)';
+            }
+            
+            // Actualizar apartado de Visualización (números por página)
+            document.getElementById('summary-display').textContent = `${numbersPerPage} número${numbersPerPage > 1 ? 's' : ''} por página`;
             
             // Manejar temporizadores vacíos
             const memorizationText = memorizationTime > 0 ? `${memorizationTime.toFixed(1)}s` : '(escribe tiempo)';
             const recallText = recallTime > 0 ? `${recallTime.toFixed(1)}s` : '(escribe tiempo)';
-            document.getElementById('summary-timers').textContent = `Temporizadores: Memorización ${memorizationText}, Recall ${recallText}`;
+            document.getElementById('summary-timers').textContent = `${recallText}`;
             
             if (currentMode === 'memorization') {
                 const modeText = memorizationTime > 0 ? `(${memorizationTime.toFixed(1)}s)` : '(escribe tiempo)';
@@ -1579,14 +1636,79 @@
             } else {
                 const autoAdvanceText = autoAdvanceTime > 0 ? `${autoAdvanceTime.toFixed(1)}s` : '(escribe tiempo)';
                 const expectedTime = calculateExpectedAutoAdvanceTime();
-                const totalText = expectedTime > 0 ? `~${expectedTime.toFixed(1)}s` : '(calculando...)';
+                const totalText = expectedTime > 0 ? `${expectedTime.toFixed(1)}s` : '(calculando...)';
                 document.getElementById('summary-mode').textContent = `Modo: Autoavance (${autoAdvanceText} por página, ${totalText} total)`;
             }
             
             // Agregar información de rondas
             const roundsText = totalRounds > 0 ? `${totalRounds} rondas` : '(escribe número de rondas)';
             if (document.getElementById('summary-rounds')) {
-                document.getElementById('summary-rounds').textContent = `Rondas: ${roundsText}`;
+                document.getElementById('summary-rounds').textContent = roundsText;
+            }
+            
+            // Calcular y actualizar tiempos estimados
+            updateEstimatedTimes();
+        }
+        
+        // Función para convertir segundos a minutos y segundos
+        function formatTimeToMinutesSeconds(seconds) {
+            if (seconds < 60) {
+                return `${seconds.toFixed(1)}s`;
+            } else {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                if (remainingSeconds === 0) {
+                    return `${minutes}m`;
+                } else {
+                    return `${minutes}m ${remainingSeconds.toFixed(1)}s`;
+                }
+            }
+        }
+        
+        // Función para actualizar tiempos estimados
+        function updateEstimatedTimes() {
+            const pages = Math.ceil(selectedDigits / numbersPerPage);
+            let timePerRound = 0;
+            let totalTime = 0;
+            let breakdown = '';
+            
+            if (currentMode === 'memorization') {
+                if (memorizationTime > 0 && recallTime > 0) {
+                    timePerRound = memorizationTime + recallTime;
+                    totalTime = timePerRound * totalRounds;
+                    breakdown = `Memorización: ${memorizationTime.toFixed(1)}s + Recall: ${recallTime.toFixed(1)}s`;
+                } else {
+                    timePerRound = 0;
+                    totalTime = 0;
+                    breakdown = 'Completa los tiempos de memorización y recall';
+                }
+            } else if (currentMode === 'auto-advance') {
+                if (autoAdvanceTime > 0 && recallTime > 0) {
+                    timePerRound = (autoAdvanceTime * pages) + recallTime;
+                    totalTime = timePerRound * totalRounds;
+                    breakdown = `Autoavance: ${autoAdvanceTime.toFixed(1)}s × ${pages} páginas + Recall: ${recallTime.toFixed(1)}s`;
+                } else {
+                    timePerRound = 0;
+                    totalTime = 0;
+                    breakdown = 'Completa los tiempos de autoavance y recall';
+                }
+            }
+            
+            // Actualizar elementos del DOM
+            const timePerRoundEl = document.getElementById('time-per-round');
+            const timeTotalEl = document.getElementById('time-total');
+            const timeBreakdownEl = document.getElementById('time-breakdown');
+            
+            if (timePerRoundEl) {
+                timePerRoundEl.textContent = timePerRound > 0 ? formatTimeToMinutesSeconds(timePerRound) : 'Calculando...';
+            }
+            
+            if (timeTotalEl) {
+                timeTotalEl.textContent = totalTime > 0 ? formatTimeToMinutesSeconds(totalTime) : 'Calculando...';
+            }
+            
+            if (timeBreakdownEl) {
+                timeBreakdownEl.textContent = breakdown;
             }
         }
 
